@@ -1,15 +1,23 @@
 /* Header.css */
+
 header {
   background-color: #333;
-  color: white;
-  padding: 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+  transition: height 0.3s ease;
+}
+
+header.shrink {
+  height: var(--header-height-collapsed);
 }
 
 nav ul {
   list-style: none;
   display: flex;
-  justify-content: space-around;
   padding: 0;
+  margin: 0;
 }
 
 nav ul li {
@@ -33,6 +41,8 @@ nav ul li .dropdown-menu {
   background-color: #444;
   padding: 0.5rem;
   list-style: none;
+  min-width: 150px; /* Ensure minimum width for dropdown */
+  box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.2); /* Add shadow for better visibility */
 }
 
 nav ul li .dropdown-menu li {
@@ -50,6 +60,24 @@ nav ul li .dropdown-menu li a:hover {
 
 .dropdown:hover .dropdown-menu {
   display: block;
+}
+
+@media (max-width: 1200px) {
+  header {
+    height: var(--header-height-lg);
+  }
+}
+
+@media (max-width: 992px) {
+  header {
+    height: var(--header-height-md);
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    height: var(--header-height-sm);
+  }
 }
 
 @media (max-width: 600px) {

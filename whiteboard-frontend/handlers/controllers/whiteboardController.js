@@ -1,5 +1,4 @@
-const Whiteboard = require('../models/Whiteboard');
-const User = require('../models/User');
+const Whiteboard = require('../../database/models/whiteboard');
 
 const createWhiteboard = async (req, res) => {
   const { userId, drawingData } = req.body;
@@ -37,5 +36,5 @@ const updateWhiteboard = async (req, res) => {
 module.exports = {
   createWhiteboard,
   updateWhiteboard,
-  clearWhiteboard,
+  clearWhiteboard
 };

@@ -14,7 +14,7 @@ const WhiteboardSchema = new mongoose.Schema({
     },
   }, { timestamps: true });
 
-WhiteboardSchemaSchema.methods.toJSON = function () {
+WhiteboardSchema.methods.toJSON = function () {
     var whiteboard = this;
     var whiteboardObject = whiteboard.toObject();
 

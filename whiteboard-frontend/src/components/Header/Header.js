@@ -1,5 +1,4 @@
-// Header.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 
@@ -10,11 +9,26 @@ const Header = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('shrink');
+      } else {
+        header.classList.remove('shrink');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <header>
       <nav>
         <ul>
-          <li><Link to="/whiteboard">Whiteboard</Link></li>
           <li className="dropdown">
             <button onClick={toggleDropdown}>Profile</button>
             {dropdownOpen && (

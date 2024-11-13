@@ -1,12 +1,18 @@
 let {Room} = require('../../database/models/room');
 let {User} = require('../../database/models/user');
-
+let {Whiteboard} = require('../../database/models/whiteboard');
 let generateRoomController = async (req, res) => {
     console.log('Room Generation request received');
     const { userId } = req.body;
     try {
-        const roomId = await getNextRoomId(); // Assuming you have a function to get the next room ID
-        const room = new Room({ roomId, participants: [userId] });
+        const roomId = await Room.randomizeRoomId();
+        console.log('Room ID:', roomId);
+        console.log("Adding user: ", userId);
+
+        const whiteboard = new Whiteboard({ drawedBy: userId, drawingData: [] });
+        await whiteboard.save();
+
+        const room = new Room({ roomId, participants: [userId], whiteboard });
         await room.save();
 
         req.session.room = room;
@@ -22,12 +28,14 @@ let generateRoomController = async (req, res) => {
 let joinRoomController = async (req, res) => {
     console.log('Request to join room received');
     const { roomId, userId } = req.body;
+    console.log('Room ID:', roomId);
+    console.log("Adding user: ", userId);
     try {
         const room = await Room.findOne({ roomId });
         if (!room) throw new Error('Room does not exist');  
         await room.addParticipant(userId);
         const updatedRoom = await Room.findOne({ roomId }); 
-        res.status(200).json({ success: true, updatedRoom });
+        res.status(200).json({ success: true, room: updatedRoom });
     } catch (e) {
         console.error('Error during joining room:', e);
         res.status(400).json({ msg: 'Error during joining room', error: e.message });
@@ -35,19 +43,20 @@ let joinRoomController = async (req, res) => {
 }
 
 let exitRoomController = async (req, res) => {
-    const { roomId, userId } = req.body;
-    try {
+  const { roomId, userId } = req.body;
+  try {
       const room = await Room.findOne({ roomId });
       if (!room) throw new Error("Room not found");
 
       await room.removeParticipant(userId);
       const updatedRoom = await Room.findOne({ roomId });
 
-      res.status(200).json({ success: true, updatedRoom });
-    } catch (error) {
+      res.status(200).json({ success: true, room: updatedRoom });
+  } catch (error) {
       res.status(400).json({ success: false, message: error.message });
-    }
-  };
+  }
+};
+
   
   let getWhiteboardController = async (req, res) => {
     const { roomId } = req.params;

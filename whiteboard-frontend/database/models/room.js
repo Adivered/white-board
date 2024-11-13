@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const RoomSchema = new mongoose.Schema({
   roomId: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },
@@ -30,23 +30,51 @@ RoomSchema.methods.toJSON = function () {
     };
 }
 
-RoomSchema.statics.addParticipant = async function (userId) { 
-    var room = this;
-    return room.update({
-        $push: {
-            participants: userId,
-        },
-    });
-}
+RoomSchema.statics.randomizeRoomId = async function () {
+  const generateRandomId = () => {
+    const digits = '0123456789';
+    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
 
-RoomSchema.statics.removeParticipant = async function (userId) {
-    var room = this;
-    return room.update({
-        $pull: {
-            participants: userId,
-        },  
-    });
-}
+    const getRandomChar = (chars) => chars[Math.floor(Math.random() * chars.length)];
+
+    let roomId = [
+      getRandomChar(digits), getRandomChar(digits),
+      getRandomChar(upperCase), getRandomChar(upperCase),
+      getRandomChar(lowerCase), getRandomChar(lowerCase)
+    ];
+
+    return roomId.sort(() => 0.5 - Math.random()).join('');
+  };
+
+  let roomId;
+  let isUnique = false;
+
+  while (!isUnique) {
+    roomId = generateRandomId();
+    isUnique = !(await this.isRoomExist(roomId).catch(() => false)); // Check uniqueness
+  }
+
+  return roomId;
+};
+
+
+
+RoomSchema.methods.addParticipant = async function (userId) {
+  // Check if the user is already in the participants list
+  if (this.participants.some(participant => participant.toString() === userId.toString())) {
+      throw new Error('User is already a participant in this room');
+  }
+
+  this.participants.push(userId);
+  await this.save();
+};
+
+
+RoomSchema.methods.removeParticipant = async function (userId) {
+  this.participants = this.participants.filter(participant => participant.toString() !== userId.toString());
+  await this.save();
+};
 
 RoomSchema.statics.isRoomExist = async function (roomId) {
   var Room = this;
@@ -62,4 +90,4 @@ RoomSchema.statics.isRoomExist = async function (roomId) {
 
 const Room = mongoose.model('Room', RoomSchema, "Room");
 
-module.exports = Room;
+module.exports = {Room};

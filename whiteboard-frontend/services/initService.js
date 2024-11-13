@@ -10,6 +10,8 @@ let addService = (serviceName, location) => {
 
 addService("reactService", "./micros/reactService");;
 addService("userAuthService", "./micros/userAuthService");
+addService("whiteboardService", "./micros/whiteboardService");
+addService("roomService", "./micros/roomService");
 
 module.exports = {
     Service,
