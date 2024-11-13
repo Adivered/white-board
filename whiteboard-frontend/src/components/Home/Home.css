@@ -1,0 +1,63 @@
+/* Home.css */
+
+.intro {
+  text-align: center;
+  margin: 1.25rem; /* 20px */
+}
+
+.user-prompt {
+  margin-top: 1.25rem; /* 20px */
+}
+
+.explore-box {
+  display: inline-block;
+  padding: 0.625rem 1.25rem; /* 10px 20px */
+  margin-top: 0.625rem; /* 10px */
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 0.3125rem; /* 5px */
+}
+
+.room-options-box {
+  margin-top: 1.25rem; /* 20px */
+  padding: 1.25rem; /* 20px */
+  border: 0.0625rem solid #ccc; /* 1px */
+  border-radius: 0.3125rem; /* 5px */
+  background-color: #f9f9f9;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.room-option {
+  margin-bottom: 0.625rem; /* 10px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.room-option input,
+.room-option button,
+.create-room-label button {
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+  padding: 0.3125rem; /* 5px */
+  margin-bottom: 0.625rem; /* 10px */
+  width: 60%;
+  text-align: center; /* Center the input prompt */
+  transition: box-shadow 0.3s ease;
+}
+
+.room-option button:hover,
+.create-room-label button:hover {
+  box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.2); /* 5px 10px */
+}
+
+.create-room-label {
+  margin-top: 1.25rem; /* 20px */
+}
+
+.create-room-label button {
+  background-color: #0056b3; /* Slightly darker than join room */
+}

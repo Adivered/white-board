@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import socket from '../utils/socket';
+import socket from '../../utils/socket';
 import './Whiteboard.css';
 
 const Whiteboard = () => {
@@ -8,18 +8,14 @@ const Whiteboard = () => {
   const socketRef = useRef();
 
   useEffect(() => {
-
-    // --------------- getContext() method returns a drawing context on the canvas-----
-
     const canvas = canvasRef.current;
-    const test = colorsRef.current;
     const context = canvas.getContext('2d');
 
     // ----------------------- Colors --------------------------------------------------
 
     const colors = document.getElementsByClassName('color');
     console.log(colors, 'the colors');
-    console.log(test);
+    console.log(colorsRef.current);
     // set the current color
     const current = {
       color: 'black',
@@ -60,37 +56,39 @@ const Whiteboard = () => {
       });
     };
 
+    // Helper function to get clientX and clientY
+    const getClientOffset = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches.length > 0 && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches.length > 0 && e.touches[0].clientY);
+      return {
+        x: (clientX - rect.left) * (canvas.width / rect.width),
+        y: (clientY - rect.top) * (canvas.height / rect.height)
+      };
+    };
+
     // ---------------- mouse movement --------------------------------------
 
     const onMouseDown = (e) => {
-        e.preventDefault();  // Prevents default touch actions like scrolling
-        drawing = true;
-        const clientX = e.clientX || (e.touches && e.touches.length > 0 && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches.length > 0 && e.touches[0].clientY);
-        current.x = clientX;
-        current.y = clientY;
-      };
-      
-      const onMouseMove = (e) => {
-        if (!drawing) { return; }
-        const clientX = e.clientX || (e.touches && e.touches.length > 0 && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches.length > 0 && e.touches[0].clientY);
-        if (clientX && clientY) {
-          drawLine(current.x, current.y, clientX, clientY, current.color, true);
-          current.x = clientX;
-          current.y = clientY;
-        }
-      };
-      
-      const onMouseUp = (e) => {
-        if (!drawing) { return; }
-        drawing = false;
-        const clientX = e.clientX || (e.touches && e.touches.length > 0 && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches.length > 0 && e.touches[0].clientY);
-        if (clientX && clientY) {
-          drawLine(current.x, current.y, clientX, clientY, current.color, true);
-        }
-      };
+      e.preventDefault();  // Prevents default touch actions like scrolling
+      drawing = true;
+      const { x, y } = getClientOffset(e);
+      current.x = x;
+      current.y = y;
+    };
+
+    const onMouseMove = (e) => {
+      if (!drawing) { return; }
+      const { x, y } = getClientOffset(e);
+      drawLine(current.x, current.y, x, y, current.color, true);
+      current.x = x;
+      current.y = y;
+    };
+
+    const onMouseUp = (e) => {
+      if (!drawing) { return; }
+      drawing = false;
+    };
 
     // ----------- limit the number of events per second -----------------------
 
@@ -143,8 +141,8 @@ const Whiteboard = () => {
   // ------------- The Canvas and color elements --------------------------
 
   return (
-    <div>
-      <canvas ref={canvasRef} className="whiteboard" />
+    <div className="whiteboard-canvas-container">
+      <canvas ref={canvasRef} className="whiteboard-canvas" />
 
       <div ref={colorsRef} className="colors">
         <div className="color black" />

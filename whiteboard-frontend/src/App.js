@@ -1,12 +1,21 @@
 import './App.css';
-
-import Whiteboard from './components/Whiteboard';
+import Home from './components/Home/Home';
+import { Routes, Route } from 'react-router-dom';
+import Login from './components/Auth/Login/Login';
+import Registration from './components/Auth/Registration/Registration';
+import Header from './components/Header/Header';
+import WhiteboardContainer from './components/Whiteboard/WhiteboardContainer';
 function App() {
 
+
+  
   return (
-    <div className="App">
-      <Whiteboard/>
-      </div>
+    <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/whiteboard" element={<WhiteboardContainer />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/signup" element = {<Registration/>} />
+  </Routes>
   );
 }
 

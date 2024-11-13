@@ -1,0 +1,54 @@
+/* WhiteboardContainer.css */
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .whiteboard-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+  }
+  
+  .whiteboard-inner-container {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+  }
+  
+  .room-credentials {
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .whiteboard-wrapper {
+    height: 30%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: aqua;
+    border: 2px solid black;
+  }
+  
+  .active-users {
+    width: 30%;
+    padding: 10px;
+    border-left: 2px solid black;
+    overflow-y: auto;
+  }
+  
+  .active-users h3 {
+    margin-top: 0;
+  }
+  
+  .active-users ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .active-users li {
+    margin-bottom: 5px;
+  }
