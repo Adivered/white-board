@@ -26,15 +26,22 @@ WhiteboardSchema.methods.toJSON = function () {
     };
 };
 
-WhiteboardSchema.statics.addDrawing = async function (userId, drawingData) {
+WhiteboardSchema.statics.findByID = function (id) {
     var whiteboard = this;
-    return whiteboard.update({
-        $push: {
-            drawedBy: userId,
-            drawingData: drawingData,
-            timestamp: Date.now(),
-        },
+
+    return Whiteboard.findById({_id}).then((whiteboard) => {
+        if (!whiteboard) {
+            return Promise.reject(new Error('Invalid whiteboard id'));
+        }
+        return whiteboard;
     });
+}
+
+WhiteboardSchema.methods.addDrawing = async function (userId, drawingData) {
+    this.drawedBy = userId;
+    this.drawingData.push(drawingData);
+    this.timestamp = Date.now();
+    return this.save();
 }
 
 WhiteboardSchema.statics.clearBoard = async function () {

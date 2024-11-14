@@ -67,19 +67,39 @@ app.get('*', (req, res) => {
 });
 
 /* SOCKET */
+const {Whiteboard} = require('./database/models/whiteboard');
+const {addDrawing} = Whiteboard;
+
+const {User} = require('./database/models/user');
+const {findByToken} = User;
+
 io.on('connection', (socket) => {
-    console.log('a user connected');
-  
-    socket.on('drawing', (data) => {
-      console.log('drawing event received:', data); // Log the drawing event
-      socket.broadcast.emit('drawing', data);
-    });
-  
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
+  console.log('a user connected');
+
+  socket.on('drawing', async (data) => {
+    console.log('drawing event received:', data); // Log the drawing event
+    
+    // Extract the necessary data
+    const { x0, y0, x1, y1, whiteboardId, drawedBy } = data;
+    const drawingData = { x0, y0, x1, y1 };
+
+    try {
+      let whiteboard = await Whiteboard.findById({_id: whiteboardId});
+      if (!whiteboard)
+        console.log("To fix");
+      await whiteboard.addDrawing(drawedBy._id, drawingData);
+    } catch (error) {
+      console.error('Error saving drawing data:', error);
+    }
+
+    // Broadcast the drawing event to other clients
+    socket.broadcast.emit('drawing', data);
   });
 
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
 
 server.listen(app.get('port'), process.env.IP, function () {
     console.log(`Server started at ${app.get('port')}`);

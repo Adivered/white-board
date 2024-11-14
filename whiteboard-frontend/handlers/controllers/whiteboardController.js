@@ -1,21 +1,28 @@
 const Whiteboard = require('../../database/models/whiteboard');
 
-const createWhiteboard = async (req, res) => {
-  const { userId, drawingData } = req.body;
+const getWhiteboardByInstance = async (req, res) => {
+  console.log("Get whiteboard by instance");
+  const { objectId } = req.params;  
+  console.log("Object ID: ", objectId);
   try {
-    const whiteboard = new Whiteboard({ drawedBy: userId, drawingData });
-    await whiteboard.save();
-    res.status(200).json({ success: true, whiteboard });
+    const whiteboard = await Whiteboard.findOne({ _id: objectId });
+    if (!whiteboard) {
+      return res.status(404).json({ success: false, message: 'Whiteboard not found' });
+    }
+    res.status(200).json({ success: true, whiteboard: whiteboard.toJSON() });
   } catch (error) {
+    console.log("Error: ", error);
     res.status(400).json({ success: false, message: error.message });
   }
-};
+}
 
 const updateWhiteboard = async (req, res) => {
     const { id, userId, drawingData } = req.body;
     try {
       await Whiteboard.addDrawing(userId, drawingData);
       const whiteboard = await Whiteboard.findById(id);
+      if (!whiteboard)
+        return res.status(404).json({ success: false, message: 'Whiteboard not found' });
       res.status(200).json({ success: true, whiteboard });
     } catch (error) {
       res.status(400).json({ success: false, message: error.message });
@@ -34,7 +41,7 @@ const updateWhiteboard = async (req, res) => {
   };
 
 module.exports = {
-  createWhiteboard,
+  getWhiteboardByInstance,
   updateWhiteboard,
   clearWhiteboard
 };

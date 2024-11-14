@@ -2,10 +2,11 @@ import React, { useRef, useEffect } from 'react';
 import socket from '../../utils/socket';
 import './Whiteboard.css';
 
-const Whiteboard = () => {
+const Whiteboard = ({whiteboardId, user, drawingData}) => {
   const canvasRef = useRef(null);
   const colorsRef = useRef(null);
   const socketRef = useRef();
+  console.log("Drawing data: ", drawingData)
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -14,8 +15,8 @@ const Whiteboard = () => {
     // ----------------------- Colors --------------------------------------------------
 
     const colors = document.getElementsByClassName('color');
-    console.log(colors, 'the colors');
-    console.log(colorsRef.current);
+    //console.log(colors, 'the colors');
+    //console.log(colorsRef.current);
     // set the current color
     const current = {
       color: 'black',
@@ -53,6 +54,8 @@ const Whiteboard = () => {
         x1: x1 / w,
         y1: y1 / h,
         color,
+        whiteboardId,
+        drawedBy: user
       });
     };
 
@@ -137,6 +140,28 @@ const Whiteboard = () => {
     socketRef.current = socket.connect('/');
     socketRef.current.on('drawing', onDrawingEvent);
   }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    const drawInitialData = (data) => {
+      console.log("data: ", data);
+      data.forEach((item) => {
+        console.log("Item: ", item);
+        const { x0, y0, x1, y1 } = item;
+        context.beginPath();
+        context.moveTo(x0, y0);
+        context.lineTo(x1, y1);
+        context.stroke();
+      });
+    };
+
+    if (drawingData && drawingData.length > 0) {
+      drawInitialData(drawingData);
+    }
+  }, [drawingData]);
+
 
   // ------------- The Canvas and color elements --------------------------
 

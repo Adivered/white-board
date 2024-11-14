@@ -58,19 +58,24 @@ let exitRoomController = async (req, res) => {
 };
 
   
-  let getWhiteboardController = async (req, res) => {
-    const { roomId } = req.params;
+  let fetchRoomController = async (req, res) => {
+    const { roomId } = req.body;
+    console.log("Room ID: ", roomId);
+
     try {
-      const room = await Room.isRoomExist(roomId);
-      res.status(200).json({ success: true, whiteboard: room.whiteboard });
+      const room = await Room.findOne({ _id: roomId });
+      if (!room) throw new Error('Room does not exist'); 
+      room.whiteboard = await Whiteboard.findById({ _id: room.whiteboard });
+      res.status(200).json({ success: true, room: room});
     } catch (error) {
+      console.log("Error : ", error);
       res.status(400).json({ success: false, message: error.message });
     }
   };
 
   
   let getActiveUsersController = async (req, res) => {
-    const { roomId } = req.params;
+    const { roomId } = req.body;
     try {
       const room = await Room.findOne({ roomId }).populate('participants');
       res.status(200).json({ success: true, participants: room.participants });
@@ -83,6 +88,6 @@ let exitRoomController = async (req, res) => {
     generateRoomController,
     joinRoomController,
     exitRoomController,
-    getWhiteboardController,
+    fetchRoomController,
     getActiveUsersController,
   };
