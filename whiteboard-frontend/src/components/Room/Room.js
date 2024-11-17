@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import WhiteboardContainer from '../Whiteboard/WhiteboardContainer'; // Make sure to import the WhiteboardContainer component
 import './Room.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const Room = ({ user }) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [showRoomOptions, setShowRoomOptions] = useState(false);
   const [roomId, setRoomId] = useState('');
   const [roomData, setRoomData] = useState(null);
+  const navigate = useNavigate();
+
 
   // Check if room data exists in localStorage on initial load
   useEffect(() => {
-    const storedRoom = JSON.parse(localStorage.getItem('room'));
-    if (storedRoom) {
-      fetch('http://10.0.0.2:5000/fetch-room', {
-        method: 'POST',
+    const session = JSON.parse(localStorage.getItem('session'));
+    if (session && session.room) {
+      console.log("Session from room: ", session);
+      fetch('/fetch-room', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ roomId: storedRoom._id }),
       })
         .then((res) => res.json().then(data => ({ status: res.status, body: data })))
         .then(({ status, body }) => {
           if (status === 200) {
-            setRoomData(body.room);
+            console.log("New Session: ", body.session);
+            localStorage.setItem('session', JSON.stringify(body.session)); // Update session
+            setRoomData(body.session.room);
           } else {
             console.error('Error fetching room:', body.message);
             setErrorMsg(body.message || 'Failed to fetch room data');
@@ -34,6 +40,7 @@ const Room = ({ user }) => {
         });
     } else {
       console.log('No room data found in storage');
+      setRoomData(null);
     }
   }, []);
 
@@ -50,20 +57,18 @@ const Room = ({ user }) => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem('user'));
-    fetch('http://10.0.0.2:5000/create-room', {
+    fetch('/create-room', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ userId: user._id }),
     })
       .then((res) => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
         if (status === 200) {
-          console.log('Room created:', body.room);
-          localStorage.setItem('room', JSON.stringify(body.room)); // Store room data in localStorage
-          renderRoom(body.room); // Render the room data
+          console.log('Room created:', body.session.room);
+          localStorage.setItem('session', JSON.stringify(body.session)); // Update session
+          renderRoom(body.session.room);
         } else {
           console.error('Error creating room:', body.message);
           setErrorMsg(body.message || 'Failed to create room');
@@ -83,50 +88,83 @@ const Room = ({ user }) => {
       return;
     }
 
-    const userId = JSON.parse(localStorage.getItem('user'))._id;
-    fetch('http://10.0.0.2:5000/join-room', {
+    fetch('/join-room', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ roomId, userId }),
+      body: JSON.stringify({ roomId }),
     })
       .then((res) => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
         if (status === 200) {
-          console.log('Joined room:', body.room);
-          localStorage.setItem('room', JSON.stringify(body.room)); // Store room data in localStorage
-          renderRoom(body.room); // Render the room data
+          console.log('Joined room:', body.session.room);
+          localStorage.setItem('session', JSON.stringify(body.session)); // Store room data in localStorage
+          renderRoom(body.session.room); // Renders empty room
         } else {
           console.error('Error joining room:', body.message);
           setErrorMsg(body.error || 'Failed to join room');
         }
       })
       .catch((err) => {
-        console.error('Error joining room:', err);
+        console.error('Error join room:', err);
         setErrorMsg('An error occurred while joining the room');
       });
   };
 
+
+  // Leave Room
+  const handleLeaveRoom = () => {
+    if (!roomData) {
+      setErrorMsg("User is not found in any room.");
+      return;
+    }
+
+    fetch('/exit-room', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json().then(data => ({ status: res.status, body: data })))
+      .then(({ status, body }) => {
+        if (status === 200) {
+          console.log('Exited room successfuly');
+          localStorage.setItem('session', JSON.stringify(body.session)); // Store room data in localStorage
+          window.location.reload();
+        } else {
+          console.error('Error exitting room:', body.message);
+          setErrorMsg(body.error || 'Failed to exit room');
+        }
+      })
+      .catch((err) => {
+        console.error('Error exitting room:', err);
+        setErrorMsg('An error occurred while exitting the room');
+      });
+  };
+
   return (
-    <div>
+    <div className='container'>
       {roomData ? (
         <div className="room-info-box">
           <h2>Room ID: {roomData.roomId}</h2>
           <h3>Participants:</h3>
           <ul>
-            {roomData.participants.map(participantId => (
-              <li key={participantId}>{participantId}</li>
-            ))}
+          {roomData.participants.map(participant => (
+            <li key={participant._id}>{participant.name}</li>
+          ))}
           </ul>
-          {console.log("Room data: ", roomData)}
           <WhiteboardContainer user={user} roomId={roomData.roomId} whiteboard={roomData.whiteboard} />
+
+          <div>
+            <button onClick={handleLeaveRoom}>Exit Room</button>
+          </div>
         </div>
       ) : (
         <>
           {user ? (
             <div className="user-prompt">
-              <h2>Hello, {user.name}</h2>
+              <h2>Hello, {user}</h2>
               {!showRoomOptions ? (
                 <div className="explore-box" onClick={() => setShowRoomOptions(true)}>
                   <p>Explore Whiteboard</p>

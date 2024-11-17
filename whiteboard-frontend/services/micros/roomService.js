@@ -16,7 +16,7 @@ module.exports = function (app) {
 
     router.get('/exit-room', exitRoomController);
 
-    router.post('/fetch-room', fetchRoomController);
+    router.get('/fetch-room', fetchRoomController);
 
     router.get('/active-users/:roomId', getActiveUsersController);
 

@@ -28,9 +28,9 @@ const Header = () => {
   return (
     <header>
       <nav>
-        <ul>
+        <ul className="menu">
           <li className="dropdown">
-            <button onClick={toggleDropdown}>Profile</button>
+            <button onClick={toggleDropdown}></button>
             {dropdownOpen && (
               <ul className="dropdown-menu">
                 <li><Link to="/login">Login</Link></li>
@@ -38,6 +38,8 @@ const Header = () => {
               </ul>
             )}
           </li>
+          <li className="logo"><a href="#">Whiteboard. io</a></li>
+
         </ul>
       </nav>
     </header>

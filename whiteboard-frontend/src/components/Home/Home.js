@@ -3,37 +3,48 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Room from '../Room/Room'; // Import the Room component
 import './Home.css';
+import makeApiRequest from '../../utils/apiBridge';
+
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log("Token: ", token);
-    if (token) {
-      fetch('http://10.0.0.2:5000/token', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json().then(data => ({ status: res.status, body: data })))
-        .then(({ status, body }) => {
-          if (status === 200) {
-            setUser(body.user);
-          } else {
-            setErrorMsg(body.msg || 'Failed to fetch user data');
-          }
-        })
-        .catch((err) => {
-          console.error('Error fetching user data:', err);
-          setErrorMsg('An error occurred while fetching user data');
-        });
+    const session = JSON.parse(localStorage.getItem('session'));
+    if(session){
+    setUser(session.name);
+    console.log("Session: ", session);
     }
   }, []);
+
+
+  // Leave Room
+  const handleLogout = () => {
+    fetch('/logout', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json().then(data => ({ status: res.status, body: data })))
+      .then(({ status, body }) => {
+        if (status === 200) {
+          localStorage.removeItem("session");
+          window.location.reload();
+          console.log("User logged out successfully");
+        } else {
+          console.error('Error exitting room:', body.message);
+          setErrorMsg(body.error || 'Failed to exit room');
+        }
+      })
+      .catch((err) => {
+        console.error('Error exitting room:', err);
+        setErrorMsg('An error occurred while exitting the room');
+      });
+  };
 
   return (
     <div className='main-container'>
@@ -41,13 +52,21 @@ const Home = () => {
         <Header />
       </div>
       <main>
+          <div>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
         <section className="intro">
-          <h1>Whiteboard.io</h1>
-          <p>
-            Our Whiteboard app allows you to collaborate in real-time with your team. 
-            Draw, write, and brainstorm ideas seamlessly on a digital canvas.
-          </p>
+          <div className="intro-div">
+            <p>
+              Our Whiteboard app allows you to collaborate in real-time with your team. 
+              Draw, write, and brainstorm ideas seamlessly on a digital canvas.
+            </p>
+          </div>
+
+          <br/> <br/>
+          <div className='room'>
           <Room user={user} />
+          </div>
         </section>
       </main>
     </div>

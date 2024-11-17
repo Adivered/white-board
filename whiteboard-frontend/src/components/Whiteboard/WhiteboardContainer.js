@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import socket from '../../utils/socket';
 import Whiteboard from './Whiteboard';
 import './WhiteboardContainer.css';
 
-const WhiteboardContainer = ({ user, roomId, whiteboard }) => {
+const WhiteboardContainer = () => {
+  const session = JSON.parse(localStorage.getItem('session'));
+  const whiteboard = session.room.whiteboard;
   
   // Transform function should be defined before it's used
-  const transformDrawingData = (data) => {
-    console.log("Data: ", data);
-    
+  const transformDrawingData = (data) => {    
     const transformedData = {};
     data.forEach((item, index) => {
       transformedData[index] = {
@@ -22,26 +21,25 @@ const WhiteboardContainer = ({ user, roomId, whiteboard }) => {
     });
     return transformedData;
   };
-  console.log("Whiteboard: ", whiteboard);
 
   // Initial state for drawing data
   const [drawingData, setDrawingData] = useState(transformDrawingData(whiteboard.drawingData || []));
-  console.log("Drawing: ", drawingData);
 
-  const fetchWhiteboard = async (whiteboardId) => {
+  const fetchWhiteboard = async () => {
+    console.log("Fetching - whiteboard: ", session.room);
     try {
-      const response = await fetch('http://10.0.0.2:5000/fetch-whiteboard', {
-        method: 'POST',
+      const response = await fetch('/fetch-whiteboard', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ whiteboardId }),
       });
 
       const result = await response.json();
 
       if (response.status === 200) {
-        return result.data;
+        localStorage.setItem('session', JSON.stringify(result.session));
+        return result.session.room.whiteboard.drawingData;
       } else {
         console.error('Failed to fetch whiteboard data');
       }
@@ -54,23 +52,20 @@ const WhiteboardContainer = ({ user, roomId, whiteboard }) => {
   // Fetch whiteboard data on mount (if necessary) or when whiteboard._id changes
   useEffect(() => {
     const initializeWhiteboard = async () => {
-      if (!whiteboard) {
-        const data = await fetchWhiteboard(whiteboard._id);
-        if (data) {
-          setDrawingData(transformDrawingData(data));
-        }
-      }
+    const data = await fetchWhiteboard();
+    if (data) {
+      console.log("New Drawing Data: ", data);
+      setDrawingData(transformDrawingData(data));
+    }
     };
 
     initializeWhiteboard();
-  }, [whiteboard._id]);
+  }, []);
 
   return (
     <div className="whiteboard-container">
       <div className="whiteboard-inner-container">
-        <div className="whiteboard-wrapper">
-          <Whiteboard user={user} drawingData={drawingData} whiteboardId={whiteboard._id} />
-        </div>
+          <Whiteboard user={session.uid} drawingData={drawingData} whiteboardId={whiteboard._id} />
       </div>
     </div>
   );

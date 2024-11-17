@@ -8,7 +8,7 @@ module.exports = (app, env, _dir = __dirname) => {
         app.use(express.static(path.join(_dir, '/build')));
     } else if (env == "development") {
         app.use(cors({ origin: true }));
-        app.use(express.static(path.join(_dir, '/token')));
+        app.use(express.static(path.join(_dir, '/public')));
     }else{
         //test maybe or something else
     }

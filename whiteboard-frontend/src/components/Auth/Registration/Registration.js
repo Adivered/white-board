@@ -19,7 +19,7 @@ const Registration = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://10.0.0.2:5000/register', {
+    fetch('/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

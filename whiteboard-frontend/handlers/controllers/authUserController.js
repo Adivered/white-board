@@ -1,4 +1,5 @@
 let {User} = require('../../database/models/user');
+
 let registerController = async (req, res) => {
     console.log('Registration request received');
     const { name, email, password } = req.body;
@@ -40,7 +41,7 @@ let loginController = async (req, res) => {
         req.session.uid = user._id;
         req.session.email = user.email;
         req.session.name = user.name;
-        res.status(200).json({ success: true, user: user.toJSON(), token });
+        res.status(200).json({ success: true, session: req.session });
     } catch (e) {
         console.error('Error during login:', e);
         res.status(400).json({ msg: 'Error during login', error: e.message });
@@ -49,11 +50,11 @@ let loginController = async (req, res) => {
 
 let getUserByTokenController = async (req, res) => {
     console.log('Get user by token request received');
-    const token = req.header('Authorization').replace('Bearer ', '');
-    console.log('Received token:', token);
+    //console.log("Session: ", req.session);
+    console.log('Received token:', req.session.xAuth);
 
     try {
-        const user = await User.findByToken(token);
+        const user = await User.findByToken(req.session.xAuth);
         if (!user) {
             return res.status(404).json({ msg: 'User not found' });
         }
@@ -65,15 +66,22 @@ let getUserByTokenController = async (req, res) => {
 };
 
 
-let logoutController = (req, res) => {
-    User.removeToken(req.token).then(() => {
-        // res.status(200).send();
-        req.session.destroy();
+let logoutController = async (req, res) => {
+    console.log("token: ", req.token);
+    try{
+        const user = await User.findOne(req.user._id);
+        console.log("User found: ", user);
+        user.removeToken(req.token).then(() => {
+            // res.status(200).send();
+            //console.log("Request session: ", req.session);
+            req.session.destroy();
+            res.redirect('/login');
+            console.log("User had been logout safely");
+        }, () => {
+            res.status(400).send({success: false, error: 'Bad Request'});                        
+        });
+    } catch (error){};
 
-        res.redirect('/login');
-    }, () => {
-        res.status(400).send({success: false, error: 'Bad Request'});                        
-    });
 }
 
 module.exports = {registerController,loginController,logoutController, getUserByTokenController}

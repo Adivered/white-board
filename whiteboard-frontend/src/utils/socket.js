@@ -1,4 +1,4 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://10.0.0.2:5000"); 
+const socket = io("/"); 
 export default socket;

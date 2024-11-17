@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-let _ = require('lodash')
 
 let reactController = require('../../handlers/controllers/reactController');
 let { registerController, loginController, logoutController, getUserByTokenController } = require('../../handlers/controllers/authUserController');

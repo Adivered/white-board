@@ -19,7 +19,11 @@ const RoomSchema = new mongoose.Schema({
 RoomSchema.methods.toJSON = function () {
     var room = this;
     var roomObject = room.toObject();
-    
+    if (roomObject.participants && roomObject.participants.length > 0 && typeof roomObject.participants[0] === 'object') {
+      roomObject.participants = roomObject.participants.map((user) => {
+        return user.toJSON ? user.toJSON() : user;
+      });
+    }
     return {
         _id: roomObject._id,
         roomId: roomObject.roomId,

@@ -39,7 +39,8 @@ WhiteboardSchema.statics.findByID = function (id) {
 
 WhiteboardSchema.methods.addDrawing = async function (userId, drawingData) {
     this.drawedBy = userId;
-    this.drawingData.push(drawingData);
+    const drawingArray = [drawingData.x0, drawingData.y0, drawingData.x1, drawingData.y1];
+    this.drawingData.push(drawingArray);
     this.timestamp = Date.now();
     return this.save();
 }

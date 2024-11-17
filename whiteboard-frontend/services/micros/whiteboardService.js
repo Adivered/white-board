@@ -7,7 +7,7 @@ let { getWhiteboardByInstance,
 
 module.exports = function (app) {
     const router = express.Router();
-    router.post('/fetch-whiteboard', getWhiteboardByInstance )
+    router.get('/fetch-whiteboard', getWhiteboardByInstance )
     router.post('/update-whiteboard', updateWhiteboard);
     router.get('/clear-whiteboard', clearWhiteboard);
     app.use(router);

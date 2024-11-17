@@ -19,7 +19,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('http://10.0.0.2:5000/login', {
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,8 +29,8 @@ const Login = () => {
       .then((res) => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {
         if (status === 200) {
-          localStorage.setItem('token', body.token); // Store token in local storage
-          localStorage.setItem('user', JSON.stringify(body.user)); // Store token in local storage
+          console.log('Response:', body);
+          localStorage.setItem('session', JSON.stringify(body.session)); // Store token in local storage
           navigate('/'); // Redirect to homepage
         } else {
           setFormData({ ...formData, errorMsg: body.error });
