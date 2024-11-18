@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { useAuth } from '../../../Context/AuthContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const Login = () => {
     password: '',
     errorMsg: '',
   });
-
+  const { setAuth } = useAuth();
   const navigate = useNavigate();
 
   const { email, password, errorMsg } = formData;
@@ -30,7 +31,8 @@ const Login = () => {
       .then(({ status, body }) => {
         if (status === 200) {
           console.log('Response:', body);
-          localStorage.setItem('session', JSON.stringify(body.session)); // Store token in local storage
+          localStorage.setItem('session', JSON.stringify(body.session));
+          setAuth(true);
           navigate('/'); // Redirect to homepage
         } else {
           setFormData({ ...formData, errorMsg: body.error });
@@ -44,33 +46,36 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      {errorMsg && <p className="error">{errorMsg}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
+      <div className="login-box">
+        <h2>Login</h2>
+        {errorMsg && <p className="error">{errorMsg}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
+              required
+            />
+            <button type="submit">Login</button>
+
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

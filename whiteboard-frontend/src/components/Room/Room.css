@@ -1,84 +1,146 @@
-.container {
+.room-container {
+  display: flex;
   width: 100%;
-
+  position: relative
 }
 
 .user-prompt {
-    margin-top: 1.25rem; /* 20px */
-  }
-  
-  .explore-box {
-    display: inline-block;
-    padding: 0.625rem 1.25rem; /* 10px 20px */
-    margin-top: 0.625rem; /* 10px */
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    border-radius: 0.3125rem; /* 5px */
-    text-align: center; /* Center the text */
-    transition: background-color 0.3s ease; /* Smooth transition for background color */
-  }
-  
-  .explore-box:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-  }
-  
-  .room-info-box{
-    height: 100%;
-    width: 100%;
-    h2 {
-      text-align: center;
-    }
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
 
-    h3 {
-      margin-left: 3rem;
-    }
+.user-prompt h2 {
+  margin-left: 32px;
+}
 
-    ul {
-      list-style-type: none;
-      margin-left: 1rem;
-    }
-  }
-  
-  .room-options-box {
-    margin-top: 1.25rem; /* 20px */
-    padding: 1.25rem; /* 20px */
-    border: 0.0625rem solid #ccc; /* 1px */
-    border-radius: 0.3125rem; /* 5px */
-    background-color: #f9f9f9;
-    width: 50%;
-    margin-left: auto;
-    margin-right: auto;
+.user-prompt-box {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
 
+.explore-box {
+  display: inline-block;
+  padding: 0.625rem 1.25rem; /* 10px 20px */
+  margin-top: 16px;
+  background: #399375;
+  border-radius: 2rem;
+  color: white;
+  cursor: pointer;
+  text-align: center; 
+  transition: background-color 0.3s ease;
+}
+
+.explore-box:hover {
+  background-color: #e7a1a4; /* Darker blue on hover */
+}
+
+.room-info-box{
+  height: 100%;
+  width: 100%;
+  h2 {
+    text-align: center;
   }
+
+  h3 {
+    margin-left: 3rem;
+  }
+
+  ul {
+    list-style-type: none;
+    margin-left: 1rem;
+  }
+}
+
+.room-options-box {
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  width: 75%;
+  max-width: 650px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+  background: #399375;
+}
+
+.room-option {
+  width: 90%;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-option input {
+  align-self: center;
+  height:100%;
+  padding: 1rem;
+  width: 70%;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  border-radius: 2rem;
+  text-align: center;
+  transition: border-color 0.3s ease;
+}
+
+.room-option input:focus {
+  border-color: #e7a1a4; /* Change to your desired color */
+  outline: none; /* Remove default outline */
+}
+
+.room-option button {
+  align-self: center;
+  margin-top: 16px;
+  width: 75%;
+  padding: 1rem;
+  border: none;
+  border-radius: 2rem;
+  background: #e92322;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.room-option button:hover {
+  background: #e7a1a4;
+}
+
+.create-room-label {
+  margin-top: 1rem;
+  width: 80%;
+}
+
+.create-room-label button {
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  background: none;
+  cursor: pointer;
   
-  .room-option {
-    margin-bottom: 0.625rem; /* 10px */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .room-option input,
-  .room-option button,
-  .create-room-label button {
-    box-sizing: border-box; /* Ensure padding and border are included in the width */
-    padding: 0.3125rem; /* 5px */
-    margin-bottom: 0.625rem; /* 10px */
-    width: 60%;
-    text-align: center; /* Center the input prompt */
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .room-option button:hover,
-  .create-room-label button:hover {
-    box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.2); /* 5px 10px */
-  }
-  
-  .create-room-label {
-    margin-top: 1.25rem; /* 20px */
-  }
-  
-  .create-room-label button {
-    background-color: #0056b3; /* Slightly darker than join room */
-  }
+}
+
+.p-error{
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.exit-room-button-container {
+  display: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 16px;
+}
+
+.exit-room-button-container button {
+  background: #e92322;
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}

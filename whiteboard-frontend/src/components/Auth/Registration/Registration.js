@@ -42,6 +42,7 @@ const Registration = () => {
 
   return (
     <div className="registration-container">
+      <div className="registration-box">
       <h2>Sign Up</h2>
       {errorMsg && <p className="error">{errorMsg}</p>}
       <form onSubmit={handleSubmit}>
@@ -77,9 +78,11 @@ const Registration = () => {
             onChange={handleChange}
             required
           />
+          <button type="submit">Sign Up</button>
+
         </div>
-        <button type="submit">Sign Up</button>
       </form>
+      </div>
     </div>
   );
 };

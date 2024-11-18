@@ -33,10 +33,11 @@
   background: #fff;
   display: flex;
   width: 90%;
-  height: 900px;
+  min-height: 500px;
+  flex-grow:1;
   border-radius: 2rem;
   margin-bottom: 64px;
-
+  justify-content: center;
 }
 .intro-div p {
   margin: 2rem;
@@ -55,6 +56,6 @@
     font-size: 20px;
   }
   .room {
-    height: 1000px;
+    min-height: 450px;
   }
 }

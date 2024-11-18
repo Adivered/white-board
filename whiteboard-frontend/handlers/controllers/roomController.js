@@ -67,7 +67,7 @@ let exitRoomController = async (req, res) => {
     let room = req.session.room
     //console.log("Room: ", room);
     const whiteboardId = room.whiteboard;
-    console.log("Updating whiteboard for", name , "in room #", room.roomId);
+    console.log("Updating room for", name , "in room #", room.roomId);
     try {
       //console.log("Whiteboard ID: ", whiteboardId);
       room = await Room.findById(room._id).populate('participants', 'name _id');

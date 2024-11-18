@@ -2,17 +2,18 @@
   
   .whiteboard-container {
     display: flex;
-    height: 80%;
     width: 100%;
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
   
   .whiteboard-inner-container {
     display: flex;
-    width: 100%;
-    background-color: #399375;
+    width: 90%;
+    background: #399375;
     border-radius: 20px;
-    margin: 32px;
+    margin-bottom: 8px;
   }
 
   @media (max-width: 768px) {
@@ -21,7 +22,6 @@
     }
 
     .whiteboard-inner-container {
-      margin: 16px;
-
+      margin-bottom: 48px;
     }
   }

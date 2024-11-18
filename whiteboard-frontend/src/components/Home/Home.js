@@ -4,57 +4,30 @@ import Header from '../Header/Header';
 import Room from '../Room/Room'; // Import the Room component
 import './Home.css';
 import makeApiRequest from '../../utils/apiBridge';
+import { useAuth } from '../../Context/AuthContext';
 
 
 const Home = () => {
-  const [user, setUser] = useState(null);
+  //const [user, setUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+  const {auth, user} = useAuth();
 
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    if(session){
-    setUser(session.name);
-    console.log("Session: ", session);
+    if(auth){
+      const session = JSON.parse(localStorage.getItem('session'));
+      //console.log("User logged: ", user);
     }
-  }, []);
+  }, [user, auth]);
 
 
   // Leave Room
-  const handleLogout = () => {
-    fetch('/logout', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => res.json().then(data => ({ status: res.status, body: data })))
-      .then(({ status, body }) => {
-        if (status === 200) {
-          localStorage.removeItem("session");
-          window.location.reload();
-          console.log("User logged out successfully");
-        } else {
-          console.error('Error exitting room:', body.message);
-          setErrorMsg(body.error || 'Failed to exit room');
-        }
-      })
-      .catch((err) => {
-        console.error('Error exitting room:', err);
-        setErrorMsg('An error occurred while exitting the room');
-      });
-  };
+  
 
   return (
     <div className='main-container'>
-      <div className='header-container'>
-        <Header />
-      </div>
       <main>
-          <div>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
         <section className="intro">
           <div className="intro-div">
             <p>
@@ -65,7 +38,7 @@ const Home = () => {
 
           <br/> <br/>
           <div className='room'>
-          <Room user={user} />
+          <Room user={user || null} />
           </div>
         </section>
       </main>

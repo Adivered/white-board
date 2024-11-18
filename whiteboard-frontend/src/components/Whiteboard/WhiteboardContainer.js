@@ -26,7 +26,7 @@ const WhiteboardContainer = () => {
   const [drawingData, setDrawingData] = useState(transformDrawingData(whiteboard.drawingData || []));
 
   const fetchWhiteboard = async () => {
-    console.log("Fetching - whiteboard: ", session.room);
+    //console.log("Fetching - whiteboard: ", session.room);
     try {
       const response = await fetch('/fetch-whiteboard', {
         method: 'GET',
@@ -54,7 +54,7 @@ const WhiteboardContainer = () => {
     const initializeWhiteboard = async () => {
     const data = await fetchWhiteboard();
     if (data) {
-      console.log("New Drawing Data: ", data);
+      //console.log("New Drawing Data: ", data);
       setDrawingData(transformDrawingData(data));
     }
     };

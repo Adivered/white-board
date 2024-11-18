@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import WhiteboardContainer from '../Whiteboard/WhiteboardContainer'; // Make sure to import the WhiteboardContainer component
 import './Room.css';
 import { useNavigate } from 'react-router-dom';
+import socket from '../../utils/socket';
 
 
 const Room = ({ user }) => {
@@ -12,32 +13,19 @@ const Room = ({ user }) => {
   const navigate = useNavigate();
 
 
+  socket.on('update-participants', () => {
+    console.log("Someone joined the room...");
+    fetchRoom();
+    
+  });
+
   // Check if room data exists in localStorage on initial load
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem('session'));
     if (session && session.room) {
       console.log("Session from room: ", session);
-      fetch('/fetch-room', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json().then(data => ({ status: res.status, body: data })))
-        .then(({ status, body }) => {
-          if (status === 200) {
-            console.log("New Session: ", body.session);
-            localStorage.setItem('session', JSON.stringify(body.session)); // Update session
-            setRoomData(body.session.room);
-          } else {
-            console.error('Error fetching room:', body.message);
-            setErrorMsg(body.message || 'Failed to fetch room data');
-          }
-        })
-        .catch((err) => {
-          console.error('Error fetching room:', err);
-          setErrorMsg('An error occurred while fetching room data');
-        });
+      fetchRoom();
+      socket.emit('join-room', session.room.roomId);
     } else {
       console.log('No room data found in storage');
       setRoomData(null);
@@ -48,6 +36,31 @@ const Room = ({ user }) => {
   function renderRoom(roomData) {
     setRoomData(roomData);
   }
+
+  // Create Room
+  const fetchRoom = () => {
+    fetch('/fetch-room', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json().then(data => ({ status: res.status, body: data })))
+      .then(({ status, body }) => {
+        if (status === 200) {
+          console.log("New Session: ", body.session);
+          localStorage.setItem('session', JSON.stringify(body.session)); // Update session
+          renderRoom(body.session.room);
+        } else {
+          console.error('Error fetching room:', body.message);
+          setErrorMsg(body.message || 'Failed to fetch room data');
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching room:', err);
+        setErrorMsg('An error occurred while fetching room data');
+      });
+  };
 
   // Create Room
   const handleCreateRoom = () => {
@@ -69,6 +82,8 @@ const Room = ({ user }) => {
           console.log('Room created:', body.session.room);
           localStorage.setItem('session', JSON.stringify(body.session)); // Update session
           renderRoom(body.session.room);
+          console.log("Emitting", roomData.roomId);
+          socket.emit('join-room', roomData.roomId);
         } else {
           console.error('Error creating room:', body.message);
           setErrorMsg(body.message || 'Failed to create room');
@@ -100,7 +115,9 @@ const Room = ({ user }) => {
         if (status === 200) {
           console.log('Joined room:', body.session.room);
           localStorage.setItem('session', JSON.stringify(body.session)); // Store room data in localStorage
-          renderRoom(body.session.room); // Renders empty room
+          renderRoom(body.session.room);
+          console.log("Emitting", roomData.roomId);
+          socket.emit('join-room', roomData.roomId);
         } else {
           console.error('Error joining room:', body.message);
           setErrorMsg(body.error || 'Failed to join room');
@@ -144,7 +161,7 @@ const Room = ({ user }) => {
   };
 
   return (
-    <div className='container'>
+    <div className='room-container'>
       {roomData ? (
         <div className="room-info-box">
           <h2>Room ID: {roomData.roomId}</h2>
@@ -156,7 +173,7 @@ const Room = ({ user }) => {
           </ul>
           <WhiteboardContainer user={user} roomId={roomData.roomId} whiteboard={roomData.whiteboard} />
 
-          <div>
+          <div className="exit-room-button-container">
             <button onClick={handleLeaveRoom}>Exit Room</button>
           </div>
         </div>
@@ -166,8 +183,10 @@ const Room = ({ user }) => {
             <div className="user-prompt">
               <h2>Hello, {user}</h2>
               {!showRoomOptions ? (
-                <div className="explore-box" onClick={() => setShowRoomOptions(true)}>
-                  <p>Explore Whiteboard</p>
+                <div className="user-prompt-box">
+                  <div className="explore-box" onClick={() => setShowRoomOptions(true)}>
+                    <p>Explore Whiteboard</p>
+                  </div>
                 </div>
               ) : (
                 <div className="room-options-box">
@@ -183,12 +202,12 @@ const Room = ({ user }) => {
                   <div className="create-room-label">
                     <button onClick={handleCreateRoom}>Create Room</button>
                   </div>
-                  <p>{errorMsg}</p>
+                  <p className='p-error'>{errorMsg}</p>
                 </div>
               )}
             </div>
           ) : (
-            <p>{errorMsg}</p>
+            <p className='p-error'>{errorMsg}</p>
           )}
         </>
       )}

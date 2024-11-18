@@ -13,9 +13,22 @@ module.exports = function setupSocket(server) {
   io.on('connection', (socket) => {
     console.log('a user connected');
 
+    // Join a room
+    socket.on('join-room', (roomId) => {
+      if (socket.rooms.has(roomId)) {
+        console.log('User is already in room:', roomId);
+        return;
+      }
+      socket.join(roomId);
+      console.log(`User joined room: ${roomId}`);
+      io.to(roomId).emit('update-participants');
+    });
+
     socket.on('drawing', async (data) => {
       //console.log('drawing event received:', data);
-      const session = socket.request.session;
+      console.log("Session", socket.request.session);
+      if (socket.rooms.has(socket.request.session.room.roomId)) {
+        const session = socket.request.session;
       let whiteboard = session.room.whiteboard._id;
       let drawedBy = session.uid;
 
@@ -33,6 +46,7 @@ module.exports = function setupSocket(server) {
       }
 
       socket.broadcast.emit('drawing', data);
+      }
     });
 
     socket.on('disconnect', () => {

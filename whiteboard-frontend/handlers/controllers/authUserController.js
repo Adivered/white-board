@@ -52,17 +52,12 @@ let getUserByTokenController = async (req, res) => {
     console.log('Get user by token request received');
     //console.log("Session: ", req.session);
     console.log('Received token:', req.session.xAuth);
-
-    try {
-        const user = await User.findByToken(req.session.xAuth);
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        res.status(200).json({ success: true, user: user.toJSON() });
-    } catch (e) {
-        console.error('Error during get user by token:', e);
-        res.status(400).json({ msg: 'Error during get user by token', error: e.message });
+    if (!req.session.xAuth) {
+        res.status(400).json({ msg: 'No token provided' });
+    }else{
+        res.status(200).json({ success: true, user: req.session.name });
     }
+    
 };
 
 

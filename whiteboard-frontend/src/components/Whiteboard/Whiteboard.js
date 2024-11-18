@@ -15,7 +15,7 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
     const drawInitialData = (data) => {
       const w = canvas.width;
       const h = canvas.height;
-      console.log("Initial Data: ", data);
+      //console.log("Initial Data: ", data);
       Object.values(data).forEach((item) => {
         //console.log("Drawing line: ", item);
         const userId = Object.keys(item)[0];
@@ -41,11 +41,8 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
 
     // Socket connection
     if (!socketRef.current){
-      console.log("Attempting to connect to socket..");
       socketRef.current = socket.connect('/');
-      console.log("Socket connected..");
       socketRef.current.on('drawing', onDrawingEvent);
-      console.log("Listening on drawing..");
     }
     // Clean up socket connection on component unmount
     return () => {
