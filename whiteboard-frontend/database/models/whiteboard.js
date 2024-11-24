@@ -6,12 +6,13 @@ const WhiteboardSchema = new mongoose.Schema({
     drawedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     drawingData: {
       type: Array,
-      required: true,
     },
+    color: {
+        type: String,
+    }
   }, { timestamps: true });
 
 WhiteboardSchema.methods.toJSON = function () {
@@ -22,6 +23,7 @@ WhiteboardSchema.methods.toJSON = function () {
         _id: whiteboardObject._id,
         drawedBy: whiteboardObject.drawedBy,
         drawingData: whiteboardObject.drawingData,
+        color: whiteboardObject.color,
         timestamp: whiteboardObject.timestamp
     };
 };
@@ -37,10 +39,10 @@ WhiteboardSchema.statics.findByID = function (id) {
     });
 }
 
-WhiteboardSchema.methods.addDrawing = async function (userId, drawingData) {
-    this.drawedBy = userId;
-    const drawingArray = [drawingData.x0, drawingData.y0, drawingData.x1, drawingData.y1];
-    this.drawingData.push(drawingArray);
+WhiteboardSchema.methods.addDrawing = async function (data) {
+    this.drawedBy = data.drawedBy;
+    this.drawingData.push([data.x0, data.y0, data.x1, data.y1]);
+    this.color = data.color;
     this.timestamp = Date.now();
     return this.save();
 }
@@ -51,6 +53,7 @@ WhiteboardSchema.statics.clearBoard = async function () {
         $set: {
             drawedBy: [],
             drawingData: [],
+            color: [],
             timestamp: [],
         },
     });

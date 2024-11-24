@@ -60,8 +60,9 @@ const { createServer } = require("node:http");
 const server = createServer(app);
 const setupSocket = require('./handlers/middlewares/setupSocket'); // Import the new middleware
 const io = setupSocket(server);
-io.engine.use(sessionMiddleware);
-
+io.use((socket, next) => {
+    sessionMiddleware(socket.request, {}, next);
+  });
 
 server.listen(app.get('port'), process.env.IP, function () {
     console.log(`Server started at ${app.get('port')}`);

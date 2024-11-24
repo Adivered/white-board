@@ -24,6 +24,7 @@ RoomSchema.methods.toJSON = function () {
         return user.toJSON ? user.toJSON() : user;
       });
     }
+
     return {
         _id: roomObject._id,
         roomId: roomObject.roomId,
@@ -67,7 +68,7 @@ RoomSchema.statics.randomizeRoomId = async function () {
 RoomSchema.methods.addParticipant = async function (userId) {
   // Check if the user is already in the participants list
   if (this.participants.some(participant => participant.toString() === userId.toString())) {
-      throw new Error('User is already a participant in this room');
+      return;
   }
 
   this.participants.push(userId);

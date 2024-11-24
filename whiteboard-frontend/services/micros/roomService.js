@@ -5,7 +5,7 @@ let { generateRoomController,
     joinRoomController,
     exitRoomController,
     fetchRoomController,
-    getActiveUsersController } = require('../../handlers/controllers/roomController');
+     } = require('../../handlers/controllers/roomController');
 
 module.exports = function (app) {
     const router = express.Router();
@@ -17,8 +17,6 @@ module.exports = function (app) {
     router.get('/exit-room', exitRoomController);
 
     router.get('/fetch-room', fetchRoomController);
-
-    router.get('/active-users/:roomId', getActiveUsersController);
 
     app.use(router);
 }

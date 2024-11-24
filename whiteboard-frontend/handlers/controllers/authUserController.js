@@ -49,15 +49,12 @@ let loginController = async (req, res) => {
 }
 
 let getUserByTokenController = async (req, res) => {
-    console.log('Get user by token request received');
-    //console.log("Session: ", req.session);
-    console.log('Received token:', req.session.xAuth);
+    console.log('Get user by token request received', req.session.xAuth);
     if (!req.session.xAuth) {
         res.status(400).json({ msg: 'No token provided' });
     }else{
         res.status(200).json({ success: true, user: req.session.name });
     }
-    
 };
 
 
@@ -65,7 +62,7 @@ let logoutController = async (req, res) => {
     console.log("token: ", req.token);
     try{
         const user = await User.findOne(req.user._id);
-        console.log("User found: ", user);
+        //console.log("User found: ", user);
         user.removeToken(req.token).then(() => {
             // res.status(200).send();
             //console.log("Request session: ", req.session);
@@ -78,5 +75,5 @@ let logoutController = async (req, res) => {
     } catch (error){};
 
 }
-
+  
 module.exports = {registerController,loginController,logoutController, getUserByTokenController}

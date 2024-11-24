@@ -1,26 +1,23 @@
 import React, { useRef, useEffect } from 'react';
-import socket from '../../utils/socket';
+//import socket from '../../utils/socket';
 import './Whiteboard.css';
+import { useSocket } from '../../Context/SocketContext';
 
 const Whiteboard = ({ whiteboardId, user, drawingData }) => {
   const canvasRef = useRef(null);
+  const {socket} = useSocket();
   const socketRef = useRef();
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-
-    // ----------------------- Draw the Initial Data -----------------------------
-
     const drawInitialData = (data) => {
       const w = canvas.width;
       const h = canvas.height;
-      //console.log("Initial Data: ", data);
+      console.log("Initial Data: ", data);
       Object.values(data).forEach((item) => {
-        //console.log("Drawing line: ", item);
         const userId = Object.keys(item)[0];
         const { x0, y0, x1, y1, color } = item[userId];
-        drawLine(x0* w, y0*h, x1 *w, y1*h, 'black');
+        drawLine(x0* w, y0*h, x1 *w, y1*h, color, false);
       });
     };
 
@@ -30,28 +27,30 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
     if (drawingData && Object.keys(drawingData).length > 0) {
       drawInitialData(drawingData);
     }
+  }, [drawingData]);
+    
 
-    // ----------------- Socket.io setup for drawing events ----------------------
-
-    const onDrawingEvent = (data) => {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    socketRef.current = socket;
+    const onDrawingEvent = (data, color) => {
+      console.log("User drawed something.. ", data, color);
       const w = canvas.width;
       const h = canvas.height;
-      drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+      drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, color, false);
     };
 
     // Socket connection
-    if (!socketRef.current){
-      socketRef.current = socket.connect('/');
-      socketRef.current.on('drawing', onDrawingEvent);
+    if (socketRef.current){
+      socketRef.current.on('drawed', onDrawingEvent);
     }
     // Clean up socket connection on component unmount
     return () => {
       if (socketRef.current) {
         console.log("Disconnecting");
-        socketRef.current.disconnect();
       }
     };
-  }, []);  // Depend on drawingData to trigger re-draw when it changes
+  }, [socketRef.current]);
 
   // ------------------- Helper to draw on the canvas ----------------------------
 
@@ -76,11 +75,11 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
         x1: x1 / w,
         y1: y1 / h,
         color,
-        whiteboardId,
         drawedBy: user,
       });
       console.log("Sent!");
     }
+    return canvas;
   };
 
   // ----------------- Canvas Event Handlers for User Drawing ----------------------

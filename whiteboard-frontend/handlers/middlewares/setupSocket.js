@@ -1,10 +1,15 @@
 const { Server } = require('socket.io');
 const { Whiteboard } = require('../../database/models/whiteboard');
+const { Room } = require('../../database/models/room');
+const {generateRoomController, fetchRoomController, joinRoomController,exitRoomController} = require('../controllers/roomController');
 const {session} = require('express-session');
+let argv = require('minimist')(process.argv.slice(2));
+const {updateWhiteboard, getWhiteboardByInstance} = require('../controllers/whiteboardController');
+
 module.exports = function setupSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: "http://10.0.0.2:3000", // Adjust to match your frontend's URL
+      origin: `http://${process.env.IP}:3000`, // Adjust to match your frontend's URL
       methods: ["GET", "POST"],
       withCredentials: true,
     },
@@ -12,41 +17,118 @@ module.exports = function setupSocket(server) {
 
   io.on('connection', (socket) => {
     console.log('a user connected');
+    if (socket.request.session.room) {
+      const roomId = socket.request.session.room._id;
+      const userId = socket.request.session.uid;
+
+      isUserParticipant(roomId, userId).then(isParticipant => {
+        if (isParticipant) {
+          console.log("Reconnecting user..");
+          socket.join(socket.request.session.room.roomId);
+          io.to(socket.request.session.room.roomId).emit('joined-room', socket.request.session.room);
+        } else {
+          console.log("User is not a participant in the room.");
+          //delete socket.request.session.room;
+        }
+      }).catch(error => {
+        console.error('Error checking participant:', error);
+      });
+    }
 
     // Join a room
     socket.on('join-room', (roomId) => {
-      if (socket.rooms.has(roomId)) {
-        console.log('User is already in room:', roomId);
-        return;
-      }
-      socket.join(roomId);
-      console.log(`User joined room: ${roomId}`);
-      io.to(roomId).emit('update-participants');
+      joinRoomController(socket.request, socket.response, roomId)
+          .then((result) => {
+            socket.request.session.room = result;
+            let session = socket.request.session;
+            socket.join(session.room.roomId);
+            console.log(`${session.name} has joined room: ${session.room.roomId}`);
+            io.to(session.room.roomId).emit('joined-room', session.room, session.name);
+            socket.request.session.save();
+          })
+          .catch(err => {
+              console.error('Error creating room:', err);
+          });
     });
 
-    socket.on('drawing', async (data) => {
-      //console.log('drawing event received:', data);
-      console.log("Session", socket.request.session);
-      if (socket.rooms.has(socket.request.session.room.roomId)) {
-        const session = socket.request.session;
-      let whiteboard = session.room.whiteboard._id;
-      let drawedBy = session.uid;
+    // Leave a room
+    socket.on('leave-room', async () => {
+      if (!socket.request.session.room)
+        return
+      let roomId = socket.request.session.room.roomId;
+      exitRoomController(socket.request, socket.response)
+      .then(() => {
+          socket.request.session.room = null;
+          io.to(roomId).emit('left-room', socket.request.session);
+          socket.leave(roomId);
+          console.log(`${socket.request.session.name} has left room: ${roomId}`);
+          socket.request.session.save();
+      }) .catch(err => {
+        console.error('Error creating room:', err);
+      });
+    });
 
+
+    socket.on('create-room', () => {
+      generateRoomController(socket.request, socket.response)
+        .then((result) => {
+          socket.request.session.room = result;
+          socket.join(socket.request.session.room.roomId);
+          console.log(`${socket.request.session.name} has created room: ${socket.request.session.room.roomId}`);
+          io.to(socket.request.session.room.roomId).emit('room-created', socket.request.session.room);
+          socket.request.session.save();
+        })
+        .catch(err => {
+            console.error('Error creating room:', err);
+        });
+    });
+
+    socket.on('fetch-room', () => {
+      console.log("fetch-room event received");
+      if(!socket.request.session.room)
+        return;
+      fetchRoomController(socket.request, socket.response)
+          .then((result) => {
+            socket.request.session.room = result;
+            console.log(`${socket.request.session.name} has refreshed room: ${socket.request.session.room.roomId}`);
+            socket.join(socket.request.session.room.roomId);
+            io.to(socket.request.session.room.roomId).emit('room-fetched', socket.request.session.room);
+          })
+          .catch(err => {
+              console.error('Error creating room:', err);
+          });
+    });
+
+    socket.on('fetch-board', () => {
+      console.log("fetch-board event received");
+      if(!socket.request.session.room)
+        return;
+      getWhiteboardByInstance(socket.request, socket.response)
+          .then((result) => {
+            socket.request.session.room.whiteboard = result;
+            console.log(`${socket.request.session.name} has refreshed whiteboard in room: ${socket.request.session.room.roomId}`);
+            io.to(socket.request.session.room.roomId).emit('board-fetched', socket.request.session.room);
+          })
+          .catch(err => {
+              console.error('Error creating room:', err);
+          });
+    });
+
+    socket.on('drawing', (data) => {
+      console.log("Data: ", data);
       const { x0, y0, x1, y1 } = data;
       const drawingData = { x0, y0, x1, y1 };
-
-      try {
-        whiteboard = await Whiteboard.findById(whiteboard);
-        await whiteboard.addDrawing(drawedBy, drawingData);
-        await whiteboard.save();
-        session.room.whiteboard = whiteboard;
-        console.log('Whiteboard saved:', whiteboard);
-      } catch (error) {
-        console.error('Error saving drawing data:', error);
-      }
-
-      socket.broadcast.emit('drawing', data);
-      }
+      console.log("Drawing Data: ", drawingData);
+      updateWhiteboard(socket.request, socket.response, data)
+        .then((result) => {
+          socket.request.session.room.whiteboard = result;
+          socket.request.session.save();
+          console.log(`${socket.request.session.name} has updated whiteboard in room: ${socket.request.session.room.roomId}`);
+          socket.broadcast.to(socket.request.session.room.roomId).emit('drawed', drawingData, data.color);
+        })
+        .catch(err => {
+            console.error('Error creating room:', err);
+        })
     });
 
     socket.on('disconnect', () => {
@@ -55,4 +137,17 @@ module.exports = function setupSocket(server) {
   });
 
   return io;
+};
+
+const isUserParticipant = async (roomId, userId) => {
+  try {
+    const room = await Room.findById(roomId);
+    if (!room) {
+      return false;
+    }
+    return room.participants.includes(userId);
+  } catch (error) {
+    console.error('Error checking participant:', error);
+    return false;
+  }
 };
