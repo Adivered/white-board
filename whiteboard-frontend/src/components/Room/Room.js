@@ -3,13 +3,14 @@ import WhiteboardContainer from '../Whiteboard/WhiteboardContainer'; // Make sur
 import './Room.css';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../Context/SocketContext';
+import { useRoom } from '../../Context/RoomContext';
 
 const Room = ({ user }) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [showRoomOptions, setShowRoomOptions] = useState(false);
-  const [roomId, setRoomId] = useState('');
-  const [roomData, setRoomData] = useState(null);
+  const [roomCodeFromClient, setRoomCodeFromClient] = useState('');
   const { socket } = useSocket();
+  const {createRoom, roomCode, participants, addParticipant, removeParticipant, exitRoom} = useRoom();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,45 +19,31 @@ const Room = ({ user }) => {
       return;
     }
     console.log("Socket connection is available in room");
-    const handleJoinedRoom = (data, name) => {
-      if (name === user) {
-        console.log("I joined the room...", data, name);
-        setRoomData(data);
+
+    // Join Room
+    const handleJoinedRoom = (data, userAdded) => {
+      if (userAdded.name === user) {
+        console.log("I joined the room...", data, userAdded.name);
+        createRoom(data);
       } else {
-        console.log("Someone else joined the room...", data, name);
-        socket.emit('fetch-room');
+        console.log(`${userAdded.name} has joined the room...`, data);
+        addParticipant(userAdded);
       }
     };
 
     const handleRoomCreated = (data) => {
-      console.log("A room had been created");
-      console.log("Data: ", data);
-      setRoomData(data);
-      localStorage.setItem('room-session', JSON.stringify(data));
+      console.log("A room had been created", data);
+      createRoom(data);
     };
 
-    const handleRoomFetched = (data) => {
-      console.log("Someone fetched the room...", data);
-      localStorage.setItem('room-session', JSON.stringify(data));
-      setRoomData(data);
+    const handleRoomFetched = (data, name) => {
+      console.log("Someone fetched the room...", data, name);
+      createRoom(data);
     };
 
     const handleRoomExit = (data) => {
       console.log("Someone left the room...", data);
-      let session = JSON.parse(localStorage.getItem('session'));
-      let name = session.name;
-      console.log("handle room session: ", session);
-      console.log("My name: ", name);
-      console.log("Data name: ", data.name);
-
-      if(data.name == name) {
-        console.log("Its me..");
-        setRoomData(null);
-        localStorage.removeItem('room-session');
-        navigate('/');
-      } else {
-        socket.emit('fetch-room');
-      }
+        removeParticipant(data);
     };
 
     socket.on('joined-room', handleJoinedRoom);
@@ -71,56 +58,39 @@ const Room = ({ user }) => {
       socket.off('room-fetched', handleRoomFetched);
       socket.off('left-room', handleRoomExit);
     };
-  }, [socket]);
-
-  // Check if room data exists in localStorage on initial load
-  useEffect(() => {
-    const session = JSON.parse(localStorage.getItem('room-session'));
-    console.log("Session useEffect: (room-session)", session);
-    if (session && socket) {
-      socket.emit('fetch-room');
-    }
-  }, []);
+  }, [socket, navigate, user]);
 
   // Create Room
   const handleCreateRoom = () => {
-    if (roomData) {
-      console.log("Room already exists:", roomData);
+    if (roomCode) {
+      console.log("Room already exists:", roomCode);
       setErrorMsg("Room already exists. You're already in a room.");
       return;
     }
-    socket.emit('create-room', { roomId });
+    socket.emit('create-room');
   };
 
   // Join Room
   const handleJoinRoom = () => {
-    if (roomData) {
-      console.log("Already joined room:", roomData);
-      setErrorMsg("Already joined this room.");
-      return;
-    }
-    socket.emit('join-room', { roomId });
+    socket.emit('join-room', { roomId: roomCodeFromClient });
   };
-
 
   // Leave Room
   const handleLeaveRoom = () => {
-    if (!roomData) {
-      setErrorMsg("User is not found in any room.");
-      return;
-    }
     socket.emit('leave-room');
+    exitRoom();
+    navigate('/');
   };
 
   return (
     <div className='room-container'>
-      {roomData ? (
+      {roomCode ? (
         <div className="room-info-box">
-          <h2>Room ID: {roomData.roomId}</h2>
+          <h2>Room ID: {roomCode}</h2>
           <h3>Participants:</h3>
           <ul>
-          {roomData.participants.map(participant => (
-            <li key={participant._id}>{participant.name}</li>
+          {participants.map(participant => (
+            <li key={participant._id}> {participant.name}</li>
           ))}
           </ul>
           <WhiteboardContainer />
@@ -146,8 +116,8 @@ const Room = ({ user }) => {
                     <input
                       type="text"
                       placeholder="Enter Room ID"
-                      value={roomId}
-                      onChange={(e) => setRoomId(e.target.value)}
+                      value={roomCodeFromClient}
+                      onChange={(e) => setRoomCodeFromClient(e.target.value)}
                     />
                     <button onClick={handleJoinRoom}>Enter</button>
                   </div>

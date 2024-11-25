@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Room from '../Room/Room'; // Import the Room component
 import './Home.css';
 import { useAuth } from '../../Context/AuthContext';
+import RoomProvider from '../../Context/RoomContext';
 
 const Home = () => {
   const {user} = useAuth();
@@ -21,7 +22,9 @@ const Home = () => {
               <>         
               <br/> <br/>
               <div className='room'>
-                <Room user={user || null} />
+                <RoomProvider>
+                  <Room user={user || null} />
+                </RoomProvider>
               </div>
             </>
             ) : <></>

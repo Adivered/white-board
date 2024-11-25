@@ -32,9 +32,16 @@ let joinRoomController = async (req, res, roomIdObj) => {
         let room = await Room.findOne({ roomId });
         if (!room) throw new Error('Room does not exist'); 
         await room.addParticipant(userId);
-        room = await Room.findOne({ roomId }).populate('participants', 'name _id').lean();
+        room = await Room.findOne({ roomId })
+                         .populate('participants', 'name _id')
+                         .populate({
+                          path: 'whiteboard',
+                          populate: {
+                            path: 'drawedBy',
+                            select: 'name _id',
+                          }
+                        })
         return room;
-
     } catch (e) {
         console.error('Error during joining room:', e);
         res.status(400).json({ msg: 'Error during joining room', error: e.message });

@@ -14,7 +14,7 @@ const getWhiteboardByInstance = async (req, res) => {
 
 const updateWhiteboard = async (req, res, data) => {
     try {
-      console.log("Request: ", req.session.room.whiteboard);
+      //console.log("Request: ", req.session.room.whiteboard);
       const whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
       await whiteboard.addDrawing(data);
       await whiteboard.save();

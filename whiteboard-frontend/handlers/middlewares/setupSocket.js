@@ -25,7 +25,7 @@ module.exports = function setupSocket(server) {
         if (isParticipant) {
           console.log("Reconnecting user..");
           socket.join(socket.request.session.room.roomId);
-          io.to(socket.request.session.room.roomId).emit('joined-room', socket.request.session.room);
+          //io.to(socket.request.session.room.roomId).emit('joined-room', socket.request.session.room);
         } else {
           console.log("User is not a participant in the room.");
           //delete socket.request.session.room;
@@ -43,7 +43,7 @@ module.exports = function setupSocket(server) {
             let session = socket.request.session;
             socket.join(session.room.roomId);
             console.log(`${session.name} has joined room: ${session.room.roomId}`);
-            io.to(session.room.roomId).emit('joined-room', session.room, session.name);
+            io.to(session.room.roomId).emit('joined-room', session.room, {_id: session.uid, name: session.name});
             socket.request.session.save();
           })
           .catch(err => {
@@ -59,7 +59,7 @@ module.exports = function setupSocket(server) {
       exitRoomController(socket.request, socket.response)
       .then(() => {
           socket.request.session.room = null;
-          io.to(roomId).emit('left-room', socket.request.session);
+          socket.broadcast.to(roomId).emit('left-room', socket.request.session.uid);
           socket.leave(roomId);
           console.log(`${socket.request.session.name} has left room: ${roomId}`);
           socket.request.session.save();
@@ -92,7 +92,7 @@ module.exports = function setupSocket(server) {
             socket.request.session.room = result;
             console.log(`${socket.request.session.name} has refreshed room: ${socket.request.session.room.roomId}`);
             socket.join(socket.request.session.room.roomId);
-            io.to(socket.request.session.room.roomId).emit('room-fetched', socket.request.session.room);
+            socket.emit('room-fetched', socket.request.session.room, socket.request.session.name);
           })
           .catch(err => {
               console.error('Error creating room:', err);
@@ -115,7 +115,7 @@ module.exports = function setupSocket(server) {
     });
 
     socket.on('drawing', (data) => {
-      console.log("Data: ", data);
+      //console.log("Data: ", data);
       const { x0, y0, x1, y1 } = data;
       const drawingData = { x0, y0, x1, y1 };
       console.log("Drawing Data: ", drawingData);

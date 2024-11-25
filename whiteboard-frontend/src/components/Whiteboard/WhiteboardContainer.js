@@ -10,7 +10,7 @@ const WhiteboardContainer = () => {
   const [drawingData, setDrawingData] = useState(null);
   // Transform function should be defined before it's used
   const transformDrawingData = (data) => {   
-    if(!data) return; 
+    if(!data || !data.drawedBy) return; 
     const transformedData = {};
     console.log("Data: ", data);
     data.drawingData.forEach((item, index) => {
@@ -25,23 +25,6 @@ const WhiteboardContainer = () => {
     });
     return transformedData;
   };
-  
-
-
-  // Fetch whiteboard data on mount (if necessary) or when whiteboard._id changes
-  // useEffect(() => {
-  //   const initializeWhiteboard = async () => {
-  //     console.log("Whiteboard: ", whiteboard);
-  //   //const data = await fetchWhiteboard();
-  //   const data = whiteboard.drawingData;
-  //   if (data) {
-  //     console.log("New Drawing Data: ", data);
-  //     setDrawingData(transformDrawingData(data));
-  //   }
-  //   };
-
-  //   initializeWhiteboard();
-  // }, []);
 
   useEffect(() => {
     if (!socket) {
@@ -50,21 +33,28 @@ const WhiteboardContainer = () => {
     }
 
     console.log("Socket connection is available in whiteboard");
-    if (!drawingData)
-      socket.emit("fetch-board");
+    const room = JSON.parse(localStorage.getItem('room-session'));
+    if (room) {
+      setDrawingData(transformDrawingData(room.whiteboard));
+      setWhiteboard(room.whiteboard);
+    }
+    else {
+      console.log("No room session found, emiting data");
+      socket.emit('fetch-board');
+    }
+
     const handleBoardFetched = (data) => {
-      console.log("Someone fetched the board...", data);
-      setDrawingData(transformDrawingData(data.whiteboard));
-      setWhiteboard(data.whiteboard);
+      localStorage.setItem('board-session', JSON.stringify(data));
+      const room = JSON.parse(localStorage.getItem('room-session'));
+      console.log("Someone fetched the board...", room);
     };
 
     socket.on('board-fetched', handleBoardFetched);
 
-    // Clean up the effect
     return () => {
       socket.off('fetch-board', handleBoardFetched);
     };
-  }, [socket, whiteboard]);
+  }, [socket]);
 
   return (
     <div className="whiteboard-container">

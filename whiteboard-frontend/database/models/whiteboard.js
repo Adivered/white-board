@@ -7,12 +7,13 @@ const WhiteboardSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    drawingData: {
-      type: Array,
-    },
-    color: {
-        type: String,
-    }
+    drawingData: [{
+      x0: Number,
+      y0: Number,
+        x1: Number,
+        y1: Number,
+        color: String
+    }],
   }, { timestamps: true });
 
 WhiteboardSchema.methods.toJSON = function () {
@@ -22,28 +23,21 @@ WhiteboardSchema.methods.toJSON = function () {
     return {
         _id: whiteboardObject._id,
         drawedBy: whiteboardObject.drawedBy,
-        drawingData: whiteboardObject.drawingData,
-        color: whiteboardObject.color,
+        createdAt: whiteboardObject.createdAt,
+        updatedAt: whiteboardObject.updatedAt,
         timestamp: whiteboardObject.timestamp
     };
 };
 
-WhiteboardSchema.statics.findByID = function (id) {
-    var whiteboard = this;
-
-    return Whiteboard.findById({_id}).then((whiteboard) => {
-        if (!whiteboard) {
-            return Promise.reject(new Error('Invalid whiteboard id'));
-        }
-        return whiteboard;
-    });
-}
-
 WhiteboardSchema.methods.addDrawing = async function (data) {
     this.drawedBy = data.drawedBy;
-    this.drawingData.push([data.x0, data.y0, data.x1, data.y1]);
-    this.color = data.color;
-    this.timestamp = Date.now();
+    this.drawingData.push({
+        x0: data.x0,
+        y0: data.y0,
+        x1: data.x1,
+        y1: data.y1,
+        color: data.color,
+    });
     return this.save();
 }
 
@@ -53,12 +47,10 @@ WhiteboardSchema.statics.clearBoard = async function () {
         $set: {
             drawedBy: [],
             drawingData: [],
-            color: [],
-            timestamp: [],
         },
     });
 }
 // Create and export the Whiteboard model
-var Whiteboard = mongoose.model('Whiteboard', WhiteboardSchema, "Whiteboard");
+var Whiteboard = mongoose.model('Whiteboard', WhiteboardSchema, "whiteboard");
 
 module.exports = { Whiteboard };

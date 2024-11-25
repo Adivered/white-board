@@ -1,43 +1,80 @@
 import React, { useRef, useEffect } from 'react';
-//import socket from '../../utils/socket';
 import './Whiteboard.css';
 import { useSocket } from '../../Context/SocketContext';
+import { useRoom } from '../../Context/RoomContext';
 
-const Whiteboard = ({ whiteboardId, user, drawingData }) => {
+const Whiteboard = ({ user }) => {
   const canvasRef = useRef(null);
   const {socket} = useSocket();
   const socketRef = useRef();
+  const {whiteboard, addDrawing, removeDrawing} = useRoom();
+  // ------------------- Helper to draw on the canvas ----------------------------
+
+  const drawLine = (x0, y0, x1, y1, color, emit) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    context.beginPath();
+    context.moveTo(x0, y0);
+    context.lineTo(x1, y1);
+    context.strokeStyle = color;
+    context.lineWidth = 1;
+    context.stroke();
+    context.closePath();
+    if (emit) {
+      const w = canvas.width;
+      const h = canvas.height;
+      socketRef.current.emit('drawing', {
+        x0: x0 / w,
+        y0: y0 / h,
+        x1: x1 / w,
+        y1: y1 / h,
+        color,
+        drawedBy: user,
+      });
+      addDrawing({
+        x0: x0 / w,
+        y0: y0 / h,
+        x1: x1 / w,
+        y1: y1 / h, color });
+    }
+    return canvas;
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const drawInitialData = (data) => {
+    const drawInitialData = () => {
       const w = canvas.width;
       const h = canvas.height;
-      console.log("Initial Data: ", data);
-      Object.values(data).forEach((item) => {
-        const userId = Object.keys(item)[0];
-        const { x0, y0, x1, y1, color } = item[userId];
-        drawLine(x0* w, y0*h, x1 *w, y1*h, color, false);
+      whiteboard.drawingData.forEach((item) => {
+        const { x0, y0, x1, y1, color } = item;
+        drawLine(x0*w, y0*h, x1*w, y1*h, color, false);
       });
     };
 
-    //console.log("Drawing data: ", drawingData);  // Logs the initial drawing data 
-    //console.log("Drawing data length: ", Object.keys(drawingData).length);  // Logs the length of the initial drawing data 
     // If drawingData exists and is not empty, draw it on the canvas
-    if (drawingData && Object.keys(drawingData).length > 0) {
-      drawInitialData(drawingData);
+    if (whiteboard && whiteboard.drawingData.length > 0) {
+      drawInitialData();
+    } else {
+      console.log("No drawing data found..");
     }
-  }, [drawingData]);
+  }, []);
     
 
   useEffect(() => {
     const canvas = canvasRef.current;
     socketRef.current = socket;
     const onDrawingEvent = (data, color) => {
-      console.log("User drawed something.. ", data, color);
       const w = canvas.width;
       const h = canvas.height;
       drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, color, false);
+      addDrawing({
+        x0: data.x0 * w,
+        y0: data.y0 * h,
+        x1: data.x1 * w,
+        y1: data.y1 * h,
+        color: data.color
+      });
     };
 
     // Socket connection
@@ -52,44 +89,18 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
     };
   }, [socketRef.current]);
 
-  // ------------------- Helper to draw on the canvas ----------------------------
-
-  const drawLine = (x0, y0, x1, y1, color, emit) => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-
-    context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
-    context.strokeStyle = color;
-    context.lineWidth = 2;
-    context.stroke();
-    context.closePath();
-    if (emit) {
-      const w = canvas.width;
-      const h = canvas.height;
-      console.log("Emitting data");
-      socketRef.current.emit('drawing', {
-        x0: x0 / w,
-        y0: y0 / h,
-        x1: x1 / w,
-        y1: y1 / h,
-        color,
-        drawedBy: user,
-      });
-      console.log("Sent!");
-    }
-    return canvas;
-  };
-
   // ----------------- Canvas Event Handlers for User Drawing ----------------------
 
   let drawing = false;
-  const current = { color: 'black' };
+  const colorRef = useRef('black');
+  let current = { color: 'black' };
 
   const onColorUpdate = (e) => {
-    current.color = e.target.className.split(' ')[1];
+    colorRef.current = e.target.className.split(' ')[1]; 
+    console.log("Color updated..", colorRef.current);
+
   };
+  
 
   // Helper function to get clientX and clientY
   const getClientOffset = (e) => {
@@ -113,7 +124,7 @@ const Whiteboard = ({ whiteboardId, user, drawingData }) => {
   const onMouseMove = (e) => {
     if (!drawing) return;
     const { x, y } = getClientOffset(e);
-    drawLine(current.x, current.y, x, y, current.color, true);
+    drawLine(current.x, current.y, x, y, colorRef.current, true);
     current.x = x;
     current.y = y;
   };
