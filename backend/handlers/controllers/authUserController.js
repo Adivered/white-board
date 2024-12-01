@@ -20,6 +20,7 @@ let registerController = async (req, res) => {
         req.session.xAuth = token;
         req.session.uid = user._id;
         req.session.name = user.name;
+        await req.session.save();
         res.status(200).json({ msg: 'Registration successful' });
     } catch (e) {
         console.error('Error during registration:', e);
@@ -41,6 +42,7 @@ let loginController = async (req, res) => {
         req.session.uid = user._id;
         req.session.email = user.email;
         req.session.name = user.name;
+        await req.session.save();
         res.status(200).json({ success: true, session: req.session });
     } catch (e) {
         console.error('Error during login:', e);
