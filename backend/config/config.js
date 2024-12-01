@@ -6,6 +6,7 @@ let initEnv = (env = process.env.NODE_ENV) => {
     var envConfig = config[env];
 
     Object.keys(envConfig).forEach((key) => {
+      console.log("key: ", key);
       process.env[key] = envConfig[key];
     });
 

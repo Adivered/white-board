@@ -1,21 +1,25 @@
 /* Env config and Env Initialiser */
 let argv = require('minimist')(process.argv.slice(2));
 let { initEnv, makeid } = require('./config/config');
-const env = initEnv(argv.env)
+
+const env = initEnv(argv.env);
 const express = require('express');
 const app = express();
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
-/*  Database handlers */
-const connection = require('./database/mongoose');
-
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
+/* Env Controller */
+let controlEnv = require('./handlers/middlewares/controllEnv');
+controlEnv(app, env, __dirname);
+
 
 /* Session */
+/*  Database handlers */
+const connection = require('./database/mongoose');
 const sessionStore = MongoStore.create({
     client: connection.getClient(),
     collection: 'session'
@@ -37,10 +41,6 @@ app.use(sessionMiddleware);
 /* view engine */
 // app.set('views', __dirname + '/views');
 // app.set('view engine', 'ejs');
-
-/* Env Controller */
-let controlEnv = require('./handlers/middlewares/controllEnv');
-controlEnv(app, env, __dirname);
 
 /* Services */
 let { Service, serviceInit, addService } = require('./services/initService');
