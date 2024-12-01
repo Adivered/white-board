@@ -27,11 +27,15 @@ const sessionStore = MongoStore.create({
 })
 
 const sessionMiddleware = session({
-    secret: "pj",
-    resave: false,
+    name: "whiteboard.sid",
+    secret: process.env.JWT_SECRET,
+    resave: true,
     saveUninitialized: true,
     store: sessionStore,
     cookie: {
+        secure:true,
+        httpOnly:true,
+        sameSite:"none",
         maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
     }
 });
