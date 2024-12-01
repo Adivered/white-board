@@ -23,4 +23,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </SocketContext.Provider>
 );
 
-serviceWorker.register();
+serviceWorker.unregister();
