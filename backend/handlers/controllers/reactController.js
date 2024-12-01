@@ -2,7 +2,6 @@ const path = require('path');
 
 const reactController = async (req, res, next) => {
     res.locals.someData = 'Some shared data';
-    console.log("hi");
     next(); // Pass control to the next handler
 };
 
