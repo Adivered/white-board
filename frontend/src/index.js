@@ -7,10 +7,8 @@ import SocketContext from './Context/SocketContext';
 import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
-const socket = io("https://white-board-29h1.onrender.com", {
-  secure: true,
+const socket = io("https://white-board-29h1.onrender.com:10000", {
   withCredentials: true,
-  rejectUnauthorized: false,
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
