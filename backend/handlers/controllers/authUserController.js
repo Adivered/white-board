@@ -54,12 +54,20 @@ let loginController = async (req, res) => {
 }
 
 let getUserByTokenController = async (req, res) => {
-    console.log("Session store: ", req.session);
-    console.log('Get user by token request received', req.session.xAuth);
-    if (!req.session.xAuth) {
+    let token = req.header('x-auth');
+    if (!token) {
+        token = req.query.xAuth;
+    }
+    if (!token) {
+        token = req.session.xAuth;
+    }
+    if (token) {
+        console.log("Token: ", token);
+        const user = await User.findByToken(token);
+        res.status(200).json({ success: true, user: {name: user.name, uid: user._id} });
+    }
+    else {
         res.status(400).json({ msg: 'No token provided' });
-    }else{
-        res.status(200).json({ success: true, user: {name: req.session.name, uid: req.session.uid} });
     }
 };
 
