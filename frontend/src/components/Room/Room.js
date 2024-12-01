@@ -6,7 +6,7 @@ import InfiniteBoard from '../Whiteboard/InfiniteBoard';
 import Sidebar from '../Sidebar/Sidebar';
 import SocketContext from '../../Context/SocketContext';
 
-const ExploreBox = ({roomCodeFromClient, setRoomCodeFromClient, handleJoinRoom, handleCreateRoom, errorMsg }) => {
+const ExploreBox = ({roomCodeFromClient, setRoomCodeFromClient, handleJoinRoom, handleCreateRoom }) => {
   return (
     <div className="explore-box">
         <div className="room-option">
@@ -20,14 +20,13 @@ const ExploreBox = ({roomCodeFromClient, setRoomCodeFromClient, handleJoinRoom, 
           <div className="create-room-label">
             <span onClick={handleCreateRoom}>Create Room</span>
             </div>  
-            <p className='p-error'>{errorMsg}</p>
         </div>
     </div>
   );
 };
 
 const Room = (props) => {
-  const [errorMsg, setErrorMsg] = useState('');
+  //const [errorMsg, setErrorMsg] = useState('');
   const [roomCodeFromClient, setRoomCodeFromClient] = useState('');
   const socket = props.socket;
   const {createRoom, roomCode, addParticipant} = useRoom();
@@ -94,7 +93,7 @@ const Room = (props) => {
           setRoomCodeFromClient={setRoomCodeFromClient}
           handleJoinRoom={handleJoinRoom}
           handleCreateRoom={handleCreateRoom}
-          errorMsg={errorMsg}
+          //errorMsg={errorMsg}
         />
       )}
     </div>

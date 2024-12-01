@@ -66,7 +66,7 @@ const Header = () => {
               </ul>
             )}
           </li>
-          <li className="logo"><a>Whiteboard. io</a></li>
+          <li className="logo"><p>Whiteboard. io</p></li>
 
         </ul>
       </nav>
