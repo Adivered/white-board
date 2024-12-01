@@ -18,7 +18,6 @@ module.exports = function setupSocket(server) {
     serveClient: false,
     pingInterval: 10000,
     pingTimeout: 5000,
-    cookie: true
   });
 
   io.on('connection', (socket) => {
