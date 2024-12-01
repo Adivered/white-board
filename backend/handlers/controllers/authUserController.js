@@ -20,6 +20,7 @@ let registerController = async (req, res) => {
         req.session.xAuth = token;
         req.session.uid = user._id;
         req.session.name = user.name;
+        res.setHeader('x-auth', token);
         await req.session.save();
         res.status(200).json({ msg: 'Registration successful' });
     } catch (e) {
@@ -42,6 +43,8 @@ let loginController = async (req, res) => {
         req.session.uid = user._id;
         req.session.email = user.email;
         req.session.name = user.name;
+        res.setHeader('x-auth', token);
+
         await req.session.save();
         res.status(200).json({ success: true, session: req.session });
     } catch (e) {
@@ -51,8 +54,6 @@ let loginController = async (req, res) => {
 }
 
 let getUserByTokenController = async (req, res) => {
-    console.log("Request: ", req);
-    connsole.log("Response: ". res);
     console.log("Session store: ", req.session);
     console.log('Get user by token request received', req.session.xAuth);
     if (!req.session.xAuth) {
