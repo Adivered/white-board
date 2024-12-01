@@ -126,6 +126,7 @@ const InfiniteBoard = (props) => {
         )
       });
     }
+    // eslint-disable-next-line   
   }, [whiteboard, scale, offsetX, offsetY]);
 
   // Socket event listeners
@@ -139,6 +140,7 @@ const InfiniteBoard = (props) => {
       y1: data.y1,
       color: color
     });
+    // eslint-disable-next-line   
   }, []);
 
   const onErasingEvent = useCallback((data) => {
@@ -149,6 +151,7 @@ const InfiniteBoard = (props) => {
       y1: data.y1,
     });
     redrawCanvas();
+    // eslint-disable-next-line   
   }, [redrawCanvas]);
 
   useEffect(() => {
@@ -162,7 +165,7 @@ const InfiniteBoard = (props) => {
         socket.off('erased', onErasingEvent);
       }
     }
-
+    // eslint-disable-next-line     
   }, [onErasingEvent, onDrawingEvent]);  
   
   // Resizing handler
@@ -239,6 +242,7 @@ const InfiniteBoard = (props) => {
     }
     prevCursorX.current = cursorX.current;
     prevCursorY.current = cursorY.current;
+    // eslint-disable-next-line   
   }, [redrawCanvas, eraser, pencilColor]);
 
   const onMouseUp = useCallback(() => {
@@ -266,6 +270,7 @@ const InfiniteBoard = (props) => {
     setOffsetY(offsetY - unitsAddTop);
 
     redrawCanvas();
+    // eslint-disable-next-line   
   }, [redrawCanvas]);
 
   // Touch functions
@@ -366,6 +371,7 @@ const InfiniteBoard = (props) => {
     }
     // Update previous touch positions
     prevTouches.current = [event.touches[0], event.touches[1]];
+    // eslint-disable-next-line
   }, [eraser, pencilColor, redrawCanvas]);
 
   const onTouchEnd = useCallback(() => {

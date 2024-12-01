@@ -63,6 +63,7 @@ const Sidebar = (props) => {
   const handleRoomExit = useCallback((data) => {
     console.log("Someone left the room...", data);
     removeParticipant(data);
+    // eslint-disable-next-line   
   }, []);
 
   // Leave Room
@@ -70,6 +71,7 @@ const Sidebar = (props) => {
     socket.emit('leave-room');
     exitRoom();
     navigate('/');
+    // eslint-disable-next-line   
   }, []);
 
   useEffect(() => {
@@ -79,6 +81,7 @@ const Sidebar = (props) => {
     return () => {
       socket.off('left-room', handleRoomExit);
     };
+    // eslint-disable-next-line   
   }, [handleRoomExit]);
 
   

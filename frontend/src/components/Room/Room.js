@@ -44,11 +44,13 @@ const Room = (props) => {
       console.log(`${userAdded.name} has joined the room...`, data);
       addParticipant(userAdded);
     }
+    // eslint-disable-next-line   
   }, [user]);
 
   const handleRoomCreated = useCallback((data) => {
     console.log("A room had been created", data);
     createRoom(data);
+    // eslint-disable-next-line   
   }, []);
 
   useEffect(() => {
@@ -61,6 +63,7 @@ const Room = (props) => {
       socket.off('joined-room', handleJoinedRoom);
       socket.off('room-created', handleRoomCreated);
     };
+    // eslint-disable-next-line   
   }, [handleJoinedRoom, handleRoomCreated]);
 
 
