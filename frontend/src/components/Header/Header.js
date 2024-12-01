@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Header.css';
 import { useAuth } from '../../Context/AuthContext';
 
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { setAuth, user } = useAuth();
+  const { setAuth } = useAuth();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -66,7 +66,7 @@ const Header = () => {
               </ul>
             )}
           </li>
-          <li className="logo"><a href="#">Whiteboard. io</a></li>
+          <li className="logo"><a>Whiteboard. io</a></li>
 
         </ul>
       </nav>
