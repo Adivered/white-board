@@ -7,7 +7,7 @@ import SocketContext from './Context/SocketContext';
 import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_API_BASE_URL, {
+const socket = io("https://white-board-29h1.onrender.com/", {
   secure: true,
   withCredentials: true,
   rejectUnauthorized: false,
