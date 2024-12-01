@@ -7,9 +7,14 @@ import SocketContext from './Context/SocketContext';
 import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
-const socket = io("https://white-board-29h1.onrender.com", {
-  withCredentials: true,
-});
+const socket = io.connect(
+  "https://white-board-29h1.onrender.com",
+  {
+    reconnection: true,
+    reconnectionDelay: 500,
+    reconnectionAttempts: 100,
+  }
+);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <SocketContext.Provider value = {socket}>
