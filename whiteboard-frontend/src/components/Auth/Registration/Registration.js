@@ -42,10 +42,9 @@ const Registration = () => {
 
   return (
     <div className="registration-container">
-      <div className="registration-box">
-      <h2>Sign Up</h2>
+      <p>Sign Up</p>
       {errorMsg && <p className="error">{errorMsg}</p>}
-      <form onSubmit={handleSubmit}>
+      <form className="registration-form-container" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="name">Name:</label>
           <input
@@ -79,10 +78,8 @@ const Registration = () => {
             required
           />
           <button type="submit">Sign Up</button>
-
         </div>
       </form>
-      </div>
     </div>
   );
 };

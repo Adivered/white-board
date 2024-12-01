@@ -38,7 +38,25 @@ WhiteboardSchema.methods.addDrawing = async function (data) {
         y1: data.y1,
         color: data.color,
     });
-    return this.save();
+    await this.save();
+}
+
+WhiteboardSchema.methods.removeDrawing = async function (data) {
+    const tolerance = 10;
+    try {
+        this.drawingData = this.drawingData.filter((drawing) => {
+            const isMatch =
+                Math.abs(drawing.x0 - data.x0) <= tolerance &&
+                Math.abs(drawing.y0 - data.y0) <= tolerance &&
+                Math.abs(drawing.x1 - data.x1) <= tolerance &&
+                Math.abs(drawing.y1 - data.y1) <= tolerance;
+            return !isMatch;
+        }
+        );
+        await this.save();
+    } catch (error) {
+        throw "Nothing to remove";
+    }
 }
 
 WhiteboardSchema.statics.clearBoard = async function () {

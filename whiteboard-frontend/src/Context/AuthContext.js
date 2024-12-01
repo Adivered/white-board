@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSocket } from './SocketContext';
 
 const AuthContext = createContext({
   auth: null,
@@ -12,7 +11,7 @@ export const useAuth = () => useContext(AuthContext);
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(null);
   const [user, setUser] = useState(null);
-  const { setSocketAuth } = useSocket();
+  // const { setSocketAuth } = useSocket();
 
 
   useEffect(() => {
@@ -32,9 +31,9 @@ const AuthProvider = ({ children }) => {
                 .then((res) => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
                 if (status === 200) {
-                    //console.log('Response:', body);
-                    setUser(body.user);
-                    setSocketAuth(true);
+                  //console.log('Response:', body);
+                  setUser(body.user);
+                  // setSocketAuth(true);
                 }
             })
         }

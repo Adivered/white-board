@@ -3,18 +3,48 @@
 * {
   font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-
-
 }
+
+:root {
+  --rosewater: #e8b4b8;
+  --dusty-rose: #eed6d3;
+  --coffee-pot: #a49393;
+  --dark-coffee-pot: #67595e;
+  --white: #ffffff;
+  --black: #000000;
+  --lilach: #eeb5eb;
+  --lilach-light: hsl(303, 63%, 95%);
+  --orchid: hsl(304, 41%, 59%);
+  --orchid-light: hsl(304, 41%, 70%);
+  --orchid-dark: hsl(304, 41%, 50%);
+  --turquoise:#c8f4f9;
+  --blue-green: #3cacae;
+  --disabled: rgb(235, 235, 228);
+}
+
 html, body {
-  background: #f9f2e4;
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+
+.app-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: auto;
+  gap: 80px;
 }
 
 header {
-  top: 0;
-  left: 0;
+  grid-row: 1;
 }
 
+.main-container {
+  grid-row: 2;
+  display: flex;
+  justify-content: center;
+}
 

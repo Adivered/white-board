@@ -1,146 +1,124 @@
 .room-container {
-  display: flex;
-  width: 100%;
-  position: relative
+  display: grid;
+  grid-template-columns: 10% 90%;
+  background: white;
+  cursor: url("../../assets/images/pencil.png"), auto;
 }
 
-.user-prompt {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
+.board-container {
+  grid-column: 2;
+  width: 100vw;
+  height: 100vh;
 }
 
-.user-prompt h2 {
-  margin-left: 32px;
+.side-bar-container {
+  grid-column: 1;
 }
 
-.user-prompt-box {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-}
+/* Room Info */
+
 
 .explore-box {
-  display: inline-block;
-  padding: 0.625rem 1.25rem; /* 10px 20px */
-  margin-top: 16px;
-  background: #399375;
-  border-radius: 2rem;
-  color: white;
-  cursor: pointer;
-  text-align: center; 
-  transition: background-color 0.3s ease;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
 
-.explore-box:hover {
-  background-color: #e7a1a4; /* Darker blue on hover */
-}
-
-.room-info-box{
-  height: 100%;
+.explore-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  h2 {
-    text-align: center;
-  }
-
-  h3 {
-    margin-left: 3rem;
-  }
-
-  ul {
-    list-style-type: none;
-    margin-left: 1rem;
-  }
+  height: 100%;
+  background-size: 60px 60px;
+  background-image: linear-gradient(90deg, black 1px, transparent 0px), linear-gradient(black 1px, transparent 0px);
+  opacity: 0.1;
+  pointer-events: none;
 }
 
-.room-options-box {
-  display: flex;
-  align-self: center;
-  flex-direction: column;
-  width: 75%;
-  max-width: 650px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 2rem;
-  background: #399375;
-}
 
 .room-option {
+  height: 60%;
   width: 90%;
-  margin-top: 32px;
+  margin: 32px auto;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .room-option input {
   align-self: center;
-  height:100%;
   padding: 1rem;
-  width: 70%;
+  width: 40%;
   font-size: 24px;
-  border: 1px solid #ccc;
-  border-radius: 2rem;
+  border: 5px solid var(--rosewater);
+  font-weight: bold;
+  border-radius: 0.5rem;
   text-align: center;
+  background: transparent;
   transition: border-color 0.3s ease;
 }
 
 .room-option input:focus {
   border-color: #e7a1a4; /* Change to your desired color */
   outline: none; /* Remove default outline */
+  /* box-shadow: 0 0 200px var(--rosewater); */
 }
 
 .room-option button {
   align-self: center;
-  margin-top: 16px;
-  width: 75%;
+  margin-top: 48px;
+  width: 43%;
   padding: 1rem;
   border: none;
   border-radius: 2rem;
-  background: #e92322;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
+  background: #e7a1a4;
+  color: var(--white);
+  font-weight: bold;
+  font-size: 16pt;
 }
 
 .room-option button:hover {
-  background: #e7a1a4;
+  background: var(--rosewater);
 }
 
 .create-room-label {
-  margin-top: 1rem;
-  width: 80%;
+  margin-top: 2rem;
+  width: 100%;
+  text-align: center;
+
 }
 
-.create-room-label button {
-  color: #fff;
+.create-room-label span {
+  color: var(--coffee-pot);
   border: none;
-  font-size: 16px;
+  font-size: 16pt;
+  font-weight: bold;
   background: none;
   cursor: pointer;
-  
 }
 
 .p-error{
-  color: #fff;
+  color: var(--rosewater);
   font-weight: bold;
   font-size: 20px;
 }
 
-.exit-room-button-container {
-  display: fixed;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 16px;
-}
 
-.exit-room-button-container button {
-  background: #e92322;
-  color: white;
-  border: none;
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
+@media (max-width: 768px) {
+  .room-container {
+    grid-template-columns: 25% 75%;
+  }
+  .room-option input {
+    width: 60%;
+  }
+
+  .room-option button {
+    width: 70%;
+  }
+
+  .create-room-label {
+    margin-top: 5rem;
+  };
 }

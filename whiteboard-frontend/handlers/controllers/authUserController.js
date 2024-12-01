@@ -53,7 +53,7 @@ let getUserByTokenController = async (req, res) => {
     if (!req.session.xAuth) {
         res.status(400).json({ msg: 'No token provided' });
     }else{
-        res.status(200).json({ success: true, user: req.session.name });
+        res.status(200).json({ success: true, user: {name: req.session.name, uid: req.session.uid} });
     }
 };
 

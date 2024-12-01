@@ -4,7 +4,7 @@ const { Room } = require('../../database/models/room');
 const {generateRoomController, fetchRoomController, joinRoomController,exitRoomController} = require('../controllers/roomController');
 const {session} = require('express-session');
 let argv = require('minimist')(process.argv.slice(2));
-const {updateWhiteboard, getWhiteboardByInstance} = require('../controllers/whiteboardController');
+const {updateWhiteboard, getWhiteboardByInstance, removeDrawingFromWhiteboard} = require('../controllers/whiteboardController');
 
 module.exports = function setupSocket(server) {
   const io = new Server(server, {
@@ -115,10 +115,8 @@ module.exports = function setupSocket(server) {
     });
 
     socket.on('drawing', (data) => {
-      //console.log("Data: ", data);
       const { x0, y0, x1, y1 } = data;
       const drawingData = { x0, y0, x1, y1 };
-      console.log("Drawing Data: ", drawingData);
       updateWhiteboard(socket.request, socket.response, data)
         .then((result) => {
           socket.request.session.room.whiteboard = result;
@@ -127,7 +125,22 @@ module.exports = function setupSocket(server) {
           socket.broadcast.to(socket.request.session.room.roomId).emit('drawed', drawingData, data.color);
         })
         .catch(err => {
-            console.error('Error creating room:', err);
+            console.error('Error drawing in room:', err);
+        })
+    });
+
+    socket.on('erasing', (data) => {
+      const { x0, y0, x1, y1 } = data;
+      const drawingData = { x0, y0, x1, y1 };
+      removeDrawingFromWhiteboard(socket.request, socket.response, data)
+        .then((result) => {
+          socket.request.session.room.whiteboard = result;
+          socket.request.session.save();
+          console.log(`${socket.request.session.name} has erased drawing from whiteboard in room: ${socket.request.session.room.roomId}`);
+          socket.broadcast.to(socket.request.session.room.roomId).emit('erased', drawingData);
+        })
+        .catch(err => {
+            console.error('Error drawing in room:', err);
         })
     });
 

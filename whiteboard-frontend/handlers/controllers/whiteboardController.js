@@ -14,15 +14,25 @@ const getWhiteboardByInstance = async (req, res) => {
 
 const updateWhiteboard = async (req, res, data) => {
     try {
-      //console.log("Request: ", req.session.room.whiteboard);
-      const whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
+      let whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
       await whiteboard.addDrawing(data);
-      await whiteboard.save();
+      whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
       return whiteboard;
     } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
+      console.log("Failed to add drawing: ", error);
     }
   };
+
+  const removeDrawingFromWhiteboard = async (req, res, data) => {
+    try {
+      let whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
+      await whiteboard.removeDrawing(data);
+      whiteboard = await Whiteboard.findById(req.session.room.whiteboard);
+      return whiteboard;
+    } catch (error) {
+      console.log("Failed to remove drawing: ", error);
+    }
+  }
   
   const clearWhiteboard = async (req, res) => {
     const { id } = req.body;
@@ -38,5 +48,6 @@ const updateWhiteboard = async (req, res, data) => {
 module.exports = {
   getWhiteboardByInstance,
   updateWhiteboard,
+  removeDrawingFromWhiteboard,
   clearWhiteboard
 };

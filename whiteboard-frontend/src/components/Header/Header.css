@@ -1,12 +1,7 @@
 /* Header.css */
 
 :root {
-  --header-height: 60px;
-  --header-height-lg: 55px;
-  --header-height-md: 50px;
-  --header-height-sm: 45px;
-  --header-height-xs: 40px;
-  --header-height-collapsed: 20px;
+  --header-height: 80px;
 }
  
 
@@ -14,7 +9,7 @@ header {
   box-sizing: border-box;
   color: #222;
   height: var(--header-height);
-  background: #399375;
+  background: var(--orchid);
   width: 100%;
   position: fixed;
   z-index: 99;
@@ -25,10 +20,6 @@ header {
   height: 100%;
   display: flex;
   align-items: center;
-}
-
-header.shrink {
-  height: var(--header-height-collapsed);
 }
 
 .menu {
@@ -45,14 +36,14 @@ header.shrink {
 }
 
 .menu a, .menu button {
-  color: white;
+  color: var(--white);
   cursor: pointer;
   text-decoration: none;
 }
 
 .logo {
   flex: 1;
-  font-size: 22px;
+  font-size: 22pt;
 }
 
 
@@ -87,36 +78,19 @@ nav ul li .dropdown-menu li a:hover {
   display: block; /* Keep the dropdown menu open when hovering over it */
 }
 
-@media (max-width: 1200px) {
-  header {
-    height: var(--header-height-lg);
-  }
-  
-}
-
 @media (max-width: 992px) {
-  header {
-    height: var(--header-height-md);
-  }
   .logo {
     font-size: 20px;
   }
 }
 
 @media (max-width: 768px) {
-  header {
-    height: var(--header-height-sm);
-  }
   .logo {
     font-size: 18px;
   }
 }
 
 @media (max-width: 600px) {
-
-  header {
-    height: var(--header-height-xs);
-  }
 
   .logo {
     font-size: 16px;

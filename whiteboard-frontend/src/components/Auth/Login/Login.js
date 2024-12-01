@@ -46,16 +46,16 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <div className="login-box">
-        <h2>Login</h2>
+        <p>Login</p>
         {errorMsg && <p className="error">{errorMsg}</p>}
-        <form onSubmit={handleSubmit}>
+        <form className="form-container" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
             <input
               type="email"
               id="email"
               name="email"
+              autoComplete='email'
               value={email}
               onChange={handleChange}
               required
@@ -69,13 +69,12 @@ const Login = () => {
               name="password"
               value={password}
               onChange={handleChange}
+              autoComplete='current-password'
               required
             />
             <button type="submit">Login</button>
-
           </div>
         </form>
-      </div>
     </div>
   );
 };
