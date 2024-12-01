@@ -6,7 +6,7 @@ module.exports = (app, env, _dir = __dirname) => {
     if (env == "production") {
         //react-path
         app.use(cors({ 
-            origin: true, 
+            origin: "https://mern-whiteboard.netlify.app", 
             secure: true, 
             withCredentials: true,
             rejectUnauthorized: false

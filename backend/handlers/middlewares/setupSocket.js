@@ -9,7 +9,7 @@ const {updateWhiteboard, getWhiteboardByInstance, removeDrawingFromWhiteboard} =
 module.exports = function setupSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: "https://mern-whiteboard.netlify.app/", // Adjust to match your frontend's URL
+      origin: "https://mern-whiteboard.netlify.app", // Adjust to match your frontend's URL
       methods: ["GET", "POST"],
       withCredentials: true,
       secure: true,

@@ -15,6 +15,7 @@ app.use(express.urlencoded({ extended: true }))
 /* Env Controller */
 let controlEnv = require('./handlers/middlewares/controllEnv');
 controlEnv(app, env, __dirname);
+app.set('trust proxy', true)
 
 
 /* Session */
@@ -41,7 +42,6 @@ const sessionMiddleware = session({
     }
 });
 
-app.set('trust proxy', true)
 app.use(sessionMiddleware);
 
 
@@ -69,7 +69,7 @@ const setupSocket = require('./handlers/middlewares/setupSocket'); // Import the
 const io = setupSocket(server);
 io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
-  });
+});
 
 server.listen(app.get('port'), process.env.IP, function () {
     console.log(`Server started at ${app.get('port')}`);
