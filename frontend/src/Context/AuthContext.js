@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
           }
         }
         try {
-            fetch('/token', {
+            fetch('https://white-board-29h1.onrender.com/token', {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
