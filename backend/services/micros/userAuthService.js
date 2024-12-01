@@ -14,6 +14,6 @@ module.exports = function (app) {
 
     router.get('/logout', auth, logoutController);
 
-    router.get('/token', auth_semi, getUserByTokenController);
+    router.get('/token', auth, getUserByTokenController);
     app.use(router);
 }
