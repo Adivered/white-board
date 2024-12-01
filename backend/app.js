@@ -29,15 +29,9 @@ const sessionStore = MongoStore.create({
 const sessionMiddleware = session({
     secret: "pj",
     resave: false,
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
     saveUninitialized: true,
     store: sessionStore,
-    domain: "https://mern-whiteboard.netlify.app/",
     cookie: {
-        sameSite: 'none',
-        secure: true,
         maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
     }
 });

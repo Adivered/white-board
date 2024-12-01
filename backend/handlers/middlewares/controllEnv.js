@@ -7,9 +7,6 @@ module.exports = (app, env, _dir = __dirname) => {
         //react-path
         app.use(cors({ 
             origin: "https://mern-whiteboard.netlify.app", 
-            secure: true, 
-            withCredentials: true,
-            rejectUnauthorized: false
     }));
         app.use(express.static(path.join(_dir, '/build')));
     } else if (env == "development") {

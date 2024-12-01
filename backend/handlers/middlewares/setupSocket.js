@@ -11,13 +11,10 @@ module.exports = function setupSocket(server) {
     cors: {
       origin: "https://mern-whiteboard.netlify.app", // Adjust to match your frontend's URL
       methods: ["GET", "POST"],
-      withCredentials: true,
-      secure: true,
-      rejectUnauthorized: false,
     },
-    serveClient: false,
     pingInterval: 10000,
     pingTimeout: 5000,
+
   });
 
   io.on('connection', (socket) => {
