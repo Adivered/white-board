@@ -49,6 +49,7 @@ let loginController = async (req, res) => {
 }
 
 let getUserByTokenController = async (req, res) => {
+    console.log("Session store: ", req.session);
     console.log('Get user by token request received', req.session.xAuth);
     if (!req.session.xAuth) {
         res.status(400).json({ msg: 'No token provided' });
