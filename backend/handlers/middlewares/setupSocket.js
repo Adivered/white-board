@@ -9,7 +9,7 @@ const {updateWhiteboard, getWhiteboardByInstance, removeDrawingFromWhiteboard} =
 module.exports = function setupSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: `http://${process.env.IP}:3000`, // Adjust to match your frontend's URL
+      origin: "https://white-board-29h1.onrender.com/", // Adjust to match your frontend's URL
       methods: ["GET", "POST"],
       withCredentials: true,
     },
