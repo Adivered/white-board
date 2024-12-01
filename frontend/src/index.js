@@ -7,7 +7,7 @@ import SocketContext from './Context/SocketContext';
 import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
-const socket = io("https://white-board-29h1.onrender.com:10000", {
+const socket = io("https://white-board-29h1.onrender.com", {
   withCredentials: true,
 });
 
