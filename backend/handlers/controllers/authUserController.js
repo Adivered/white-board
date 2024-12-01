@@ -55,6 +55,10 @@ let loginController = async (req, res) => {
 
 let getUserByTokenController = async (req, res) => {
     let token = req.header('x-auth');
+    console.log("Token: ", token);
+    console.log("Session: ", req.session);
+    console.log("Token: ", req.token);
+
     if (!token) {
         token = req.query.xAuth;
     }
