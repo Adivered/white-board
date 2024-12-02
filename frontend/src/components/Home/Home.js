@@ -56,7 +56,7 @@ const Home = () => {
 
   if (localStorage.getItem('session')) {
     console.log('Session: ', JSON.parse(localStorage.getItem('session')));
-    userObj = JSON.parse(localStorage.getItem('session')).user;
+    userObj = JSON.parse(localStorage.getItem('session')).name;
   } else {
     console.log("Overridinng user")
     userObj = user;
