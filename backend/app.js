@@ -11,12 +11,7 @@ const session = require('express-session');
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-
-/* Env Controller */
-let controlEnv = require('./handlers/middlewares/controllEnv');
-controlEnv(app, env, __dirname);
 app.set('trust proxy', true)
-
 
 /* Session */
 /*  Database handlers */
@@ -30,7 +25,7 @@ const sessionMiddleware = session({
     name: "whiteboard.sid",
     secret: process.env.JWT_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: sessionStore,
     cookie: {
         secure:true,
@@ -40,6 +35,9 @@ const sessionMiddleware = session({
 });
 
 app.use(sessionMiddleware);
+/* Env Controller */
+let controlEnv = require('./handlers/middlewares/controllEnv');
+controlEnv(app, env, __dirname);
 
 
 /* view engine */
