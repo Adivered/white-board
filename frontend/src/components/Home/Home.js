@@ -58,8 +58,12 @@ const Home = () => {
     console.log('Session: ', JSON.parse(localStorage.getItem('session')));
     userObj = JSON.parse(localStorage.getItem('session')).user;
   } else {
+    console.log("Overridinng user")
     userObj = user;
   }
+
+  console.log("User obj: ", userObj);
+  console.log("User: ", user);
 
   return (
     <>
