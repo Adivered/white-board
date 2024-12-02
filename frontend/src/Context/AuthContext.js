@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
                 .then((res) => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
                 if (status === 200) {
-                  //console.log('Response:', body);
+                  console.log('Response:', body);
                   setUser(body.user);
                   // setSocketAuth(true);
                 }

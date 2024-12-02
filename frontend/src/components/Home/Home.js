@@ -51,9 +51,11 @@ const RoomObj = ({isDimmed}) => {
 }
 
 const Home = () => {
-  const { user } = useAuth();
   if (localStorage.getItem('session')) {
     console.log('Session: ', JSON.parse(localStorage.getItem('session')));
+    const user = JSON.parse(localStorage.getItem('session')).user;
+  } else {
+    const {user} = useAuth();
   }
 
   return (
