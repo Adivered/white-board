@@ -62,8 +62,8 @@ const Home = () => {
 
   return (
     <>
-      <RoomObj isDimmed={user ? false : true}/>
-      {user ? null : <Hero />}
+      <RoomObj isDimmed={userObj ? false : true}/>
+      {userObj ? null : <Hero />}
     </>
   );
 };
