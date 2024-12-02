@@ -44,9 +44,7 @@ let loginController = async (req, res) => {
         req.session.email = user.email;
         req.session.name = user.name;
         res.setHeader('x-auth', token);
-
-        await req.session.save();
-        res.status(200).json({ success: true, session: req.session });
+        res.status(200).json({ success: true, session: user.toJSON(), token});
     } catch (e) {
         console.error('Error during login:', e);
         res.status(400).json({ msg: 'Error during login', error: e.message });
@@ -54,6 +52,7 @@ let loginController = async (req, res) => {
 }
 
 let getUserByTokenController = async (req, res) => {
+    console.log("Request: ", req);
     let token = req.header('x-auth');
     console.log("Token: ", token);
     console.log("Session: ", req.session);
