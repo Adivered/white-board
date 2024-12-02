@@ -18,8 +18,6 @@ controlEnv(app, env, __dirname);
 app.set('trust proxy', true)
 
 
-
-
 /* Session */
 /*  Database handlers */
 const connection = require('./database/mongoose');
@@ -31,12 +29,11 @@ const sessionStore = MongoStore.create({
 const sessionMiddleware = session({
     name: "whiteboard.sid",
     secret: process.env.JWT_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     store: sessionStore,
     cookie: {
         secure:true,
-        httpOnly:true,
         sameSite:"none",
         maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
     }

@@ -26,6 +26,7 @@ const AuthProvider = ({ children }) => {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
+                credentials: 'include',
                 },
             })
                 .then((res) => res.json().then(data => ({ status: res.status, body: data })))
