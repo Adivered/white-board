@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
             fetch('https://white-board-29h1.onrender.com/token', {
                 method: 'GET',
                 headers: {
+                'x-auth': JSON.parse(localStorage.getItem('token')),
                 'Content-Type': 'application/json',
                 credentials: 'include',
                 },

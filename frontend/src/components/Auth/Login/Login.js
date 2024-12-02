@@ -32,6 +32,7 @@ const Login = () => {
         if (status === 200) {
           console.log('Response:', body);
           localStorage.setItem('session', JSON.stringify(body.session));
+          localStorage.setItem('token', JSON.stringify(body.token));
           setAuth(true);
           navigate('/'); // Redirect to homepage
         } else {
