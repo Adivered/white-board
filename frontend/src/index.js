@@ -8,7 +8,7 @@ import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
 const socket = io.connect(
-  "http://10.0.0.31:5000" || "https://white-board-29h1.onrender.com",
+  "https://white-board-29h1.onrender.com",
   {
     withCredentials: true,
     auth: {
