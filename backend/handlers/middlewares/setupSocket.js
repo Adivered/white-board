@@ -39,7 +39,7 @@ const setupSocket = (io) => {
             });
             socket.request.session.save();
           })
-          .catch(err => handleSocketError('join-room', err));
+          .catch(err => console.log('Error joining room:', err));
         });
 
       // Leave a room
