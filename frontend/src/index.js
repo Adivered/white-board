@@ -11,9 +11,6 @@ const socket = io.connect(
   "https://white-board-29h1.onrender.com",
   {
     withCredentials: true,
-    auth: {
-      token: JSON.parse(localStorage.getItem('token')),
-    }
   }
 );
 

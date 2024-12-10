@@ -28,25 +28,19 @@ const setupSocket = (io) => {
 
       // Join a room
       socket.on('join-room', (roomId) => {
-        try {
-          validateSession(() => {
-            joinRoomController(socket.request, socket.response, roomId)
-              .then((result) => {
-                socket.request.session.room = result;
-                socket.join(result.roomId);
-                console.log(`${session.name} has joined room: ${session.room.roomId}`);
-                io.to(result.roomId).emit('joined-room', result, {
-                  _id: socket.request.session.uid, 
-                  name: socket.request.session.name
-                });
-                socket.request.session.save();
-              })
-              .catch(err => handleSocketError('join-room', err));
-          });
-        } catch (error) {
-          handleSocketError('join-room', error);
-        }
-      });
+        joinRoomController(socket.request, socket.response, roomId)
+          .then((result) => {
+            socket.request.session.room = result;
+            socket.join(result.roomId);
+            console.log(`${session.name} has joined room: ${session.room.roomId}`);
+            io.to(result.roomId).emit('joined-room', result, {
+              _id: socket.request.session.uid, 
+              name: socket.request.session.name
+            });
+            socket.request.session.save();
+          })
+          .catch(err => handleSocketError('join-room', err));
+        });
 
       // Leave a room
       socket.on('leave-room', async () => {
