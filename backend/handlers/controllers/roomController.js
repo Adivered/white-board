@@ -3,8 +3,6 @@ let {Whiteboard} = require('../../database/models/whiteboard');
 
 
 let generateRoomController = async (req, res) => {
-    console.log("Session store: ", req.session);
-    console.log("User: ", req.user);
     const userId = req.session.uid;
     console.log("Creating room for user", req.session.name);
     try {

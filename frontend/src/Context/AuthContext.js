@@ -22,22 +22,24 @@ const AuthProvider = ({ children }) => {
           }
         }
         try {
-            fetch('https://white-board-29h1.onrender.com/token', {
-                method: 'GET',
-                headers: {
-                'x-auth': JSON.parse(localStorage.getItem('token')),
-                'Content-Type': 'application/json',
-                credentials: 'include',
-                },
-            })
-                .then((res) => res.json().then(data => ({ status: res.status, body: data })))
-                .then(({ status, body }) => {
-                if (status === 200) {
-                  console.log('Response:', body);
-                  setUser(body.user);
-                  // setSocketAuth(true);
-                }
-            })
+          //https://white-board-29h1.onrender.com/token
+          //http://192.168.1.134:3000/
+          fetch('https://white-board-29h1.onrender.com/token', {
+              method: 'GET',
+              headers: {
+              'x-auth': JSON.parse(localStorage.getItem('token')),
+              'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+              })
+              .then((res) => res.json().then(data => ({ status: res.status, body: data })))
+              .then(({ status, body }) => {
+              if (status === 200) {
+                console.log('Response:', body);
+                setUser(body.user);
+                // setSocketAuth(true);
+              }
+          })
         }
         catch(err) {
             console.error('Error refreshing token:', err);

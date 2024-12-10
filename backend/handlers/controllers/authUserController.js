@@ -32,9 +32,8 @@ let registerController = async (req, res) => {
 
 
 let loginController = async (req, res) => {
-    console.log('Login request received');
     const { email, password } = req.body;
-    console.log('Received data:', { email, password });
+    console.log('Login Request Received data:', { email, password });
 
     try {
         const user = await User.findByCredentials(email, password);
@@ -44,6 +43,8 @@ let loginController = async (req, res) => {
         req.session.email = user.email;
         req.session.name = user.name;
         res.setHeader('x-auth', token);
+        await req.session.save();
+        console.log("Setting session ID: ", req.sessionID)
         res.status(200).json({ success: true, session: user.toJSON(), token});
     } catch (e) {
         console.error('Error during login:', e);
@@ -53,9 +54,10 @@ let loginController = async (req, res) => {
 
 let getUserByTokenController = async (req, res) => {
     let token = req.token;
-    console.log("Token: ", req.token);
     if (token) {
         console.log("Token: ", token);
+        console.log("Retrieving session ID: ", req.sessionID)
+        console.log("Session store (token refresh): ", req.session);
         const user = await User.findByToken(token);
         res.status(200).json({ success: true, user: {name: user.name, uid: user._id} });
     }

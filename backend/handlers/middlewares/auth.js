@@ -1,7 +1,7 @@
 let { User } = require('../../database/models/user');
 
 let auth = (req, res, next) => {
-    // console.log('start auth');
+    // console.log('start auth');   
     let token = req.header('x-auth');
     if (!token) {
         token = req.query.xAuth;

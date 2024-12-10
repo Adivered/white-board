@@ -3,7 +3,7 @@ const path = require('path');
 
 let reactController = require('../../handlers/controllers/reactController');
 let { registerController, loginController, logoutController, getUserByTokenController } = require('../../handlers/controllers/authUserController');
-let { auth, auth_semi } = require('../../handlers/middlewares/auth');
+let { auth } = require('../../handlers/middlewares/auth');
 
 module.exports = function (app) {
     const router = express.Router();
@@ -15,5 +15,6 @@ module.exports = function (app) {
     router.get('/logout', auth, logoutController);
 
     router.get('/token', auth, getUserByTokenController);
+
     app.use(router);
 }

@@ -1,11 +1,12 @@
 const express = require('express');
 
-let reactController = require('../../handlers/controllers/reactController');
 let { generateRoomController,
     joinRoomController,
     exitRoomController,
     fetchRoomController,
      } = require('../../handlers/controllers/roomController');
+
+let { auth } = require('../../handlers/middlewares/auth');
 
 module.exports = function (app) {
     const router = express.Router();

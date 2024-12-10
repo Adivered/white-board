@@ -12,11 +12,14 @@ const Header = () => {
   };
 
   const handleLogout = () => {
+   // fetch('https://white-board-29h1.onrender.com/logout', {
     fetch('https://white-board-29h1.onrender.com/logout', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'x-auth': JSON.parse(localStorage.getItem('token')),
       },
+      credentials: 'include',
     })
       .then((res) => res.json().then(data => ({ status: res.status, body: data })))
       .then(({ status, body }) => {

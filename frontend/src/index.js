@@ -8,11 +8,12 @@ import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
 const socket = io.connect(
-  "https://white-board-29h1.onrender.com",
+  "http://10.0.0.31:5000" || "https://white-board-29h1.onrender.com",
   {
-    reconnection: true,
-    reconnectionDelay: 500,
-    reconnectionAttempts: 100,
+    withCredentials: true,
+    auth: {
+      token: JSON.parse(localStorage.getItem('token')),
+    }
   }
 );
 

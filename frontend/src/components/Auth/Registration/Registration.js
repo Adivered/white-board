@@ -24,6 +24,7 @@ const Registration = () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ name, email, password }),
     })
       .then((res) => res.json().then(data => ({ status: res.status, body: data })))

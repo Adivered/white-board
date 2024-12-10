@@ -1,34 +1,69 @@
-let initEnv = (env = process.env.NODE_ENV) => {
-  env = (env == null) ? "development" : env;
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
-  if (env === 'development' || env === 'test' || env === 'production') {
-    var config = require('./config.json');
-    var envConfig = config[env];
+// Read configuration from config.json
+const loadConfig = () => {
+  try {
+    const configPath = path.resolve(__dirname, 'config.json');
+    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  } catch (error) {
+    console.error('Error reading config file:', error);
+    return {};
+  }
+};
 
-    Object.keys(envConfig).forEach((key) => {
-      console.log("key: ", key);
+// Generate a secure random ID
+const makeid = (len = 32) => {
+  return crypto.randomBytes(len / 2).toString('hex');
+};
+
+// Environment initializer
+const initEnv = (env = process.env.NODE_ENV) => {
+  // Ensure valid environment
+  env = ['development', 'test', 'production'].includes(env) 
+    ? env 
+    : 'development';
+
+  // Load configuration
+  const config = loadConfig();
+  const envConfig = config[env] || {};
+
+  // Set environment variables
+  Object.keys(envConfig).forEach((key) => {
+    // Only set if not already set in process.env
+    if (!process.env[key]) {
       process.env[key] = envConfig[key];
-    });
+    }
+  });
 
-    if (env === 'production') {
+  // Special handling for production
+  if (env === 'production') {
+    // Generate JWT_SECRET if not provided
+    if (!process.env.JWT_SECRET) {
       process.env.JWT_SECRET = makeid(32);
     }
+
+    // Validate critical production configurations
+    const requiredVars = ['MONGODB_URI', 'JWT_SECRET'];
+    const missingVars = requiredVars.filter(
+      variable => !process.env[variable]
+    );
+
+    if (missingVars.length > 0) {
+      console.error(
+        `Missing required environment variables: ${missingVars.join(', ')}`
+      );
+      process.exit(1);
+    }
   }
+
+  // Explicitly set NODE_ENV
   process.env.NODE_ENV = env;
-  return env
-}
+  return env;
+};
 
-
-let makeid = (len = 6) => {
-  var text = "";
-  var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-  var possible2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ.!@#$%^&*";
-
-  for (var i = 0; i < len / 2; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-    text += possible2.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}
-
-module.exports = { initEnv, makeid };
+module.exports = { 
+  initEnv, 
+  makeid 
+};
