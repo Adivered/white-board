@@ -32,7 +32,7 @@ const setupSocket = (io) => {
           .then((result) => {
             socket.request.session.room = result;
             socket.join(result.roomId);
-            console.log(`${session.name} has joined room: ${session.room.roomId}`);
+            console.log(`${socket.request.session.name} has joined room: ${result.roomId}`);
             io.to(result.roomId).emit('joined-room', result, {
               _id: socket.request.session.uid, 
               name: socket.request.session.name
