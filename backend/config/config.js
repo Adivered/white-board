@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// Read configuration from config.json
 const loadConfig = () => {
   try {
     const configPath = path.resolve(__dirname, 'config.json');
@@ -18,20 +17,16 @@ const makeid = (len = 32) => {
   return crypto.randomBytes(len / 2).toString('hex');
 };
 
-// Environment initializer
 const initEnv = (env = process.env.NODE_ENV) => {
-  // Ensure valid environment
   env = ['development', 'test', 'production'].includes(env) 
     ? env 
     : 'development';
 
-  // Load configuration
   const config = loadConfig();
   const envConfig = config[env] || {};
 
   // Set environment variables
   Object.keys(envConfig).forEach((key) => {
-    // Only set if not already set in process.env
     if (!process.env[key]) {
       process.env[key] = envConfig[key];
     }
@@ -39,12 +34,10 @@ const initEnv = (env = process.env.NODE_ENV) => {
 
   // Special handling for production
   if (env === 'production') {
-    // Generate JWT_SECRET if not provided
     if (!process.env.JWT_SECRET) {
       process.env.JWT_SECRET = makeid(32);
     }
 
-    // Validate critical production configurations
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET'];
     const missingVars = requiredVars.filter(
       variable => !process.env[variable]
@@ -58,7 +51,6 @@ const initEnv = (env = process.env.NODE_ENV) => {
     }
   }
 
-  // Explicitly set NODE_ENV
   process.env.NODE_ENV = env;
   return env;
 };

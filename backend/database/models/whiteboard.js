@@ -68,7 +68,6 @@ WhiteboardSchema.statics.clearBoard = async function () {
         },
     });
 }
-// Create and export the Whiteboard model
 var Whiteboard = mongoose.model('Whiteboard', WhiteboardSchema, "whiteboard");
 
 module.exports = { Whiteboard };

@@ -4,16 +4,12 @@ const {updateWhiteboard, getWhiteboardByInstance, removeDrawingFromWhiteboard} =
 const setupSocket = (io) => {
   io.use((socket, next) => {
     const req = socket.request;
-    console.log("Socket middleware - checking session");
 
-    // More robust session handling
     if (!req.session) {
       console.error("No session found");
       return next(new Error('Authentication error'));
     }
     if(req.session.xAuth) {
-      console.log("Session found in socket:", req.session.xAuth);
-      console.log("Session store (socket):", req.session);
       next();
     }
     else {

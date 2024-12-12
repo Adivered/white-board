@@ -40,7 +40,6 @@ var UserSchema = new mongoose.Schema({
     }]
 });
 
-// Manually pick fields instead of using lodash _.pick
 UserSchema.methods.toJSON = function () {
     var user = this;
     var userObject = user.toObject();
@@ -145,7 +144,6 @@ UserSchema.pre('save', function (next) {
     }
 });
 
-// Create and export the User model
 var User = mongoose.model('User', UserSchema, "User");
 
 module.exports = { User };

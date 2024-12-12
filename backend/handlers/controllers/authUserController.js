@@ -71,10 +71,7 @@ let logoutController = async (req, res) => {
     console.log("token: ", req.token);
     try{
         const user = await User.findOne(req.user._id);
-        //console.log("User found: ", user);
         user.removeToken(req.token).then(() => {
-            // res.status(200).send();
-            //console.log("Request session: ", req.session);
             req.session.destroy();
             res.redirect('/login');
             console.log("User had been logout safely");
