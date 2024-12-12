@@ -34,20 +34,9 @@ const updateWhiteboard = async (req, res, data) => {
     }
   }
   
-  const clearWhiteboard = async (req, res) => {
-    const { id } = req.body;
-    try {
-      await Whiteboard.clearBoard();
-      const whiteboard = await Whiteboard.findById(id);
-      res.status(200).json({ success: true, whiteboard });
-    } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  };
 
 module.exports = {
   getWhiteboardByInstance,
   updateWhiteboard,
   removeDrawingFromWhiteboard,
-  clearWhiteboard
 };
