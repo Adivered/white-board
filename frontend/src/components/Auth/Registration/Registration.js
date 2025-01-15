@@ -19,7 +19,7 @@ const Registration = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('https://white-board-29h1.onrender.com/register', {
+    fetch('/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

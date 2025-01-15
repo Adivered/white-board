@@ -13,7 +13,7 @@ const Header = () => {
 
   const handleLogout = () => {
    // fetch('https://white-board-29h1.onrender.com/logout', {
-    fetch('https://white-board-29h1.onrender.com/logout', {
+    fetch('/logout', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
         try {
           //https://white-board-29h1.onrender.com/token
           //http://192.168.1.134:3000/
-          fetch('https://white-board-29h1.onrender.com/token', {
+          fetch('/token', {
               method: 'GET',
               headers: {
               'x-auth': JSON.parse(localStorage.getItem('token')),

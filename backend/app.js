@@ -64,10 +64,10 @@ let service = (argv.service == null) ? Service.All() : argv.service.split(',');
 serviceInit(app, service);
 
 app.set('port', (process.env.PORT || 5000))
+app.use(express.static(__dirname + '../frontend/build'));
 
 app.get('*', (req, res) => {
-    // res.sendFile(path.join(__dirname + '/client/public/index.html'));
-    res.send('404')
+    res.sendFile(path.join(__dirname + '../frontend/build/index.html'));
 });
 
 

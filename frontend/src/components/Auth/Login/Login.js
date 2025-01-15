@@ -21,7 +21,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     //'https://white-board-29h1.onrender.com/login'
-    fetch('https://white-board-29h1.onrender.com/login', {
+    fetch('/login', { // CHANGED
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
