@@ -11,7 +11,7 @@ const corsOptions = {
         // `http://${process.env.PUBLIC_IP}:${process.env.PORT}`,
         // 'http://localhost:3000', 
         // 'http://127.0.0.1:3000', 
-        'https://mern-whiteboard.netlify.app',
+        'https://white-board-29h1.onrender.com/',
       ];
       
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -30,7 +30,7 @@ module.exports = (app, env, _dir = __dirname) => {
         //react-path
         app.set('trust proxy', true)
         app.use(cors({ 
-            origin: "https://mern-whiteboard.netlify.app", 
+            origin: "https://white-board-29h1.onrender.com/", 
             allowedHeaders: ["Content-Type", "Authorization", "x-auth"],
             methods: ["GET", "POST"],
             credentials: true,

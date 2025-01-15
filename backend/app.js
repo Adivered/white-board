@@ -87,7 +87,7 @@ const io = new Server(httpServer, {
             // `http://${process.env.PUBLIC_IP}:${process.env.PORT}`,
             // 'http://localhost:3000', 
             // 'http://127.0.0.1:3000', 
-            'https://mern-whiteboard.netlify.app',
+            'https://white-board-29h1.onrender.com/',
         ],
         methods: ["GET", "POST"],
         credentials: true,

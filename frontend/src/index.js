@@ -8,7 +8,7 @@ import * as serviceWorker from './serviceWorker';
 import io from 'socket.io-client';
 
 const socket = io.connect(
-  "https://mern-whiteboard.netlify.app", // CHANGED
+  "https://white-board-29h1.onrender.com/", // CHANGED
   {
     withCredentials: true,
   }
